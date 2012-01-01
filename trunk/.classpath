@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="core/src/main/java"/>
 	<classpathentry kind="src" path="core/target/generated-sources/messages"/>
-	<classpathentry kind="src" path="core/src/test/java"/>
 	<classpathentry kind="src" path="core/src/test/resources"/>
 	<classpathentry exported="true" kind="lib" path="core/src/main/resources"/>
 	<classpathentry kind="lib" path="core/src/main/lib/mina-core-1.1.7.jar"/>

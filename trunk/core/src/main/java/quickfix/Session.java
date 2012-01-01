@@ -66,7 +66,6 @@ import quickfix.field.TargetLocationID;
 import quickfix.field.TargetSubID;
 import quickfix.field.TestReqID;
 import quickfix.field.Text;
-import quickfix.fix41.Logon;
 
 /**
  * The Session is the primary FIX abstraction for message communication. It
@@ -390,9 +389,10 @@ public class Session implements Closeable {
 
     protected final static Logger log = LoggerFactory.getLogger(Session.class);
 
-    Session(Application application, MessageStoreFactory messageStoreFactory, SessionID sessionID,
-            DataDictionaryProvider dataDictionaryProvider, SessionSchedule sessionSchedule,
-            LogFactory logFactory, MessageFactory messageFactory, int heartbeatInterval) {
+    Session(final Application application, final MessageStoreFactory messageStoreFactory,
+            final SessionID sessionID, final DataDictionaryProvider dataDictionaryProvider,
+            final SessionSchedule sessionSchedule, final LogFactory logFactory,
+            final MessageFactory messageFactory, final int heartbeatInterval) {
         this(application, messageStoreFactory, sessionID, dataDictionaryProvider, sessionSchedule,
                 logFactory, messageFactory, heartbeatInterval, true, DEFAULT_MAX_LATENCY, true,
                 false, false, false, false, true, false, true, false,
@@ -400,20 +400,23 @@ public class Session implements Closeable {
                 false, true, false, null, true, DEFAULT_RESEND_RANGE_CHUNK_SIZE, false, false);
     }
 
-    Session(Application application, MessageStoreFactory messageStoreFactory, SessionID sessionID,
-            DataDictionaryProvider dataDictionaryProvider, SessionSchedule sessionSchedule,
-            LogFactory logFactory, MessageFactory messageFactory, int heartbeatInterval,
-            boolean checkLatency, int maxLatency, boolean millisecondsInTimeStamp,
-            boolean resetOnLogon, boolean resetOnLogout, boolean resetOnDisconnect,
-            boolean refreshMessageStoreAtLogon, boolean checkCompID,
-            boolean redundantResentRequestsAllowed, boolean persistMessages,
-            boolean useClosedRangeForResend, double testRequestDelayMultiplier,
-            DefaultApplVerID senderDefaultApplVerID, boolean validateSequenceNumbers,
-            int[] logonIntervals, boolean resetOnError, boolean disconnectOnError,
-            boolean ignoreHeartBeatFailure, boolean rejectInvalidMessage,
-            boolean forceResendWhenCorruptedStore, Set<InetAddress> allowedRemoteAddresses,
-            boolean validateIncomingMessage, int resendRequestChunkSize,
-            boolean enableNextExpectedMsgSeqNum, boolean enableLastMsgSeqNumProcessed) {
+    Session(final Application application, final MessageStoreFactory messageStoreFactory,
+            final SessionID sessionID, final DataDictionaryProvider dataDictionaryProvider,
+            final SessionSchedule sessionSchedule, final LogFactory logFactory,
+            final MessageFactory messageFactory, final int heartbeatInterval,
+            final boolean checkLatency, final int maxLatency,
+            final boolean millisecondsInTimeStamp, final boolean resetOnLogon,
+            final boolean resetOnLogout, final boolean resetOnDisconnect,
+            final boolean refreshMessageStoreAtLogon, final boolean checkCompID,
+            final boolean redundantResentRequestsAllowed, final boolean persistMessages,
+            final boolean useClosedRangeForResend, final double testRequestDelayMultiplier,
+            final DefaultApplVerID senderDefaultApplVerID, final boolean validateSequenceNumbers,
+            final int[] logonIntervals, final boolean resetOnError,
+            final boolean disconnectOnError, final boolean ignoreHeartBeatFailure,
+            final boolean rejectInvalidMessage, final boolean forceResendWhenCorruptedStore,
+            final Set<InetAddress> allowedRemoteAddresses, final boolean validateIncomingMessage,
+            final int resendRequestChunkSize, final boolean enableNextExpectedMsgSeqNum,
+            final boolean enableLastMsgSeqNumProcessed) {
         this.application = application;
         this.sessionID = sessionID;
         this.sessionSchedule = sessionSchedule;
@@ -485,7 +488,7 @@ public class Session implements Closeable {
      *
      * @param responder a responder implementation
      */
-    public void setResponder(Responder responder) {
+    public void setResponder(final Responder responder) {
         synchronized (responderSync) {
             this.responder = responder;
             if (responder != null) {
@@ -511,7 +514,7 @@ public class Session implements Closeable {
         return getResponder() != null;
     }
 
-    private synchronized boolean checkSessionTime(boolean updateLastSessionTimeCheck)
+    private synchronized boolean checkSessionTime(final boolean updateLastSessionTimeCheck)
             throws IOException {
         if (sessionSchedule == null) {
             return true;
@@ -550,7 +553,7 @@ public class Session implements Closeable {
      * @return true is send was successful, false otherwise
      * @throws SessionNotFound if session could not be located
      */
-    public static boolean sendToTarget(Message message) throws SessionNotFound {
+    public static boolean sendToTarget(final Message message) throws SessionNotFound {
         return sendToTarget(message, "");
     }
 
@@ -564,7 +567,8 @@ public class Session implements Closeable {
      * @return true is send was successful, false otherwise
      * @throws SessionNotFound if session could not be located
      */
-    public static boolean sendToTarget(Message message, String qualifier) throws SessionNotFound {
+    public static boolean sendToTarget(final Message message, final String qualifier)
+            throws SessionNotFound {
         try {
             final String senderCompID = message.getHeader().getString(SenderCompID.FIELD);
             final String targetCompID = message.getHeader().getString(TargetCompID.FIELD);
@@ -585,8 +589,8 @@ public class Session implements Closeable {
      * @return true is send was successful, false otherwise
      * @throws SessionNotFound if session could not be located
      */
-    public static boolean sendToTarget(Message message, String senderCompID, String targetCompID)
-            throws SessionNotFound {
+    public static boolean sendToTarget(final Message message, final String senderCompID,
+            final String targetCompID) throws SessionNotFound {
         return sendToTarget(message, senderCompID, targetCompID, "");
     }
 
@@ -603,8 +607,8 @@ public class Session implements Closeable {
      * @return true is send was successful, false otherwise
      * @throws SessionNotFound if session could not be located
      */
-    public static boolean sendToTarget(Message message, String senderCompID, String targetCompID,
-            String qualifier) throws SessionNotFound {
+    public static boolean sendToTarget(final Message message, final String senderCompID,
+            final String targetCompID, final String qualifier) throws SessionNotFound {
         try {
             return sendToTarget(message,
                     new SessionID(message.getHeader().getString(BeginString.FIELD), senderCompID,
@@ -624,7 +628,8 @@ public class Session implements Closeable {
      * @return true is send was successful, false otherwise
      * @throws SessionNotFound if session could not be located
      */
-    public static boolean sendToTarget(Message message, SessionID sessionID) throws SessionNotFound {
+    public static boolean sendToTarget(final Message message, final SessionID sessionID)
+            throws SessionNotFound {
         final Session session = lookupSession(sessionID);
         if (session == null) {
             throw new SessionNotFound();
@@ -633,11 +638,11 @@ public class Session implements Closeable {
         return session.send(message);
     }
 
-    static void registerSession(Session session) {
+    static void registerSession(final Session session) {
         sessions.put(session.getSessionID(), session);
     }
 
-    static void unregisterSessions(List<SessionID> sessionIds) {
+    static void unregisterSessions(final List<SessionID> sessionIds) {
         for (final SessionID sessionId : sessionIds) {
             final Session session = sessions.remove(sessionId);
             if (session != null) {
@@ -656,7 +661,7 @@ public class Session implements Closeable {
      * @param sessionID the session ID
      * @return the session, if found, or null otherwise
      */
-    public static Session lookupSession(SessionID sessionID) {
+    public static Session lookupSession(final SessionID sessionID) {
         return sessions.get(sessionID);
     }
 
@@ -668,11 +673,11 @@ public class Session implements Closeable {
         setEnabled(true);
     }
 
-    private synchronized void setEnabled(boolean enabled) {
+    private synchronized void setEnabled(final boolean enabled) {
         this.enabled = enabled;
     }
 
-    private void initializeHeader(Message.Header header) {
+    private void initializeHeader(final Message.Header header) {
         state.setLastSentTime(SystemTime.currentTimeMillis());
         header.setString(BeginString.FIELD, sessionID.getBeginString());
         header.setString(SenderCompID.FIELD, sessionID.getSenderCompID());
@@ -685,13 +690,13 @@ public class Session implements Closeable {
         insertSendingTime(header);
     }
 
-    private void optionallySetID(Header header, int field, String value) {
+    private void optionallySetID(final Header header, final int field, final String value) {
         if (!value.equals(SessionID.NOT_SET)) {
             header.setString(field, value);
         }
     }
 
-    private void insertSendingTime(Message.Header header) {
+    private void insertSendingTime(final Message.Header header) {
         final boolean includeMillis = sessionID.getBeginString().compareTo(
                 FixVersions.BEGINSTRING_FIX42) >= 0
                 && millisecondsInTimeStamp;
@@ -709,7 +714,7 @@ public class Session implements Closeable {
      * This method can be used to manually logout of a FIX session.
      * @param reason this will be included in the logout message
      */
-    public void logout(String reason) {
+    public void logout(final String reason) {
         state.setLogoutReason(reason);
         logout();
     }
@@ -805,7 +810,7 @@ public class Session implements Closeable {
      * @param num next outgoing sequence number
      * @throws IOException IO error
      */
-    public void setNextSenderMsgSeqNum(int num) throws IOException {
+    public void setNextSenderMsgSeqNum(final int num) throws IOException {
         state.getMessageStore().setNextSenderMsgSeqNum(num);
     }
 
@@ -816,7 +821,7 @@ public class Session implements Closeable {
      * @param num next expected target sequence number
      * @throws IOException IO error
      */
-    public void setNextTargetMsgSeqNum(int num) throws IOException {
+    public void setNextTargetMsgSeqNum(final int num) throws IOException {
         state.getMessageStore().setNextTargetMsgSeqNum(num);
     }
 
@@ -865,7 +870,7 @@ public class Session implements Closeable {
     /**
      * (Internal use only)
      */
-    public void next(Message message) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
+    public void next(final Message message) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
             IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
 
         final Header header = message.getHeader();
@@ -1056,7 +1061,7 @@ public class Session implements Closeable {
         }
     }
 
-    private boolean resetOrDisconnectIfRequired(Message msg) {
+    private boolean resetOrDisconnectIfRequired(final Message msg) {
         if (!resetOnError && !disconnectOnError) {
             return false;
         }
@@ -1087,12 +1092,13 @@ public class Session implements Closeable {
         return false;
     }
 
-    private boolean isStateRefreshNeeded(String msgType) {
+    private boolean isStateRefreshNeeded(final String msgType) {
         return refreshMessageStoreAtLogon && !state.isInitiator() && msgType.equals(MsgType.LOGON);
     }
 
-    private void nextReject(Message reject) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
+    private void nextReject(final Message reject) throws FieldNotFound, RejectLogon,
+            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+            InvalidMessage {
         if (!verify(reject, false, validateSequenceNumbers)) {
             return;
         }
@@ -1100,7 +1106,7 @@ public class Session implements Closeable {
         nextQueued();
     }
 
-    private void nextResendRequest(Message resendRequest) throws IOException, RejectLogon,
+    private void nextResendRequest(final Message resendRequest) throws IOException, RejectLogon,
             FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType,
             InvalidMessage {
         if (!verify(resendRequest, false, false)) {
@@ -1123,7 +1129,7 @@ public class Session implements Closeable {
      * @throws IOException
      * @throws InvalidMessage
      */
-    private void manageGapFill(Message messageOutSync, int beginSeqNo, int endSeqNo)
+    private void manageGapFill(final Message messageOutSync, final int beginSeqNo, int endSeqNo)
             throws FieldNotFound, IOException, InvalidMessage {
 
         // Adjust the ending sequence number for older versions of FIX
@@ -1219,15 +1225,15 @@ public class Session implements Closeable {
         }
     }
 
-    private String formatEndSeqNum(int seqNo) {
+    private String formatEndSeqNum(final int seqNo) {
         return (seqNo == 0 ? "infinity" : Integer.toString(seqNo));
     }
 
-    private Message parseMessage(String messageData) throws InvalidMessage {
+    private Message parseMessage(final String messageData) throws InvalidMessage {
         return MessageUtils.parse(this, messageData);
     }
 
-    private boolean isTargetTooLow(int msgSeqNum) throws IOException {
+    private boolean isTargetTooLow(final int msgSeqNum) throws IOException {
         return msgSeqNum < state.getNextTargetMsgSeqNum();
     }
 
@@ -1238,8 +1244,8 @@ public class Session implements Closeable {
      * @param endSeqNo
      * @throws FieldNotFound
      */
-    private void generateSequenceReset(Message receivedMessage, int beginSeqNo, int endSeqNo)
-            throws FieldNotFound {
+    private void generateSequenceReset(final Message receivedMessage, final int beginSeqNo,
+            final int endSeqNo) throws FieldNotFound {
         final Message sequenceReset = messageFactory.create(sessionID.getBeginString(),
                 MsgType.SEQUENCE_RESET);
         final int newSeqNo = endSeqNo;
@@ -1263,7 +1269,7 @@ public class Session implements Closeable {
         getLog().onEvent("Sent SequenceReset TO: " + newSeqNo);
     }
 
-    private boolean resendApproved(Message message) throws FieldNotFound {
+    private boolean resendApproved(final Message message) throws FieldNotFound {
         try {
             application.toApp(message, sessionID);
         } catch (final DoNotSend e) {
@@ -1276,7 +1282,7 @@ public class Session implements Closeable {
         return true;
     }
 
-    private void initializeResendFields(Message message) throws FieldNotFound {
+    private void initializeResendFields(final Message message) throws FieldNotFound {
         final Message.Header header = message.getHeader();
         final Date sendingTime = header.getUtcTimeStamp(SendingTime.FIELD);
         header.setUtcTimeStamp(OrigSendingTime.FIELD, sendingTime);
@@ -1284,11 +1290,11 @@ public class Session implements Closeable {
         insertSendingTime(header);
     }
 
-    private void logApplicationException(String location, Throwable t) {
+    private void logApplicationException(final String location, final Throwable t) {
         logThrowable(getLog(), "Application exception in " + location, t);
     }
 
-    private void nextLogout(Message logout) throws IOException, RejectLogon, FieldNotFound,
+    private void nextLogout(final Message logout) throws IOException, RejectLogon, FieldNotFound,
             IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         if (!verify(logout, false, false)) {
             return;
@@ -1319,11 +1325,11 @@ public class Session implements Closeable {
         generateLogout(null, null);
     }
 
-    private void generateLogout(Message otherLogout) {
+    private void generateLogout(final Message otherLogout) {
         generateLogout(otherLogout, null);
     }
 
-    private void generateLogout(String reason) {
+    private void generateLogout(final String reason) {
         generateLogout(null, reason);
     }
 
@@ -1332,7 +1338,7 @@ public class Session implements Closeable {
      * @param otherLogout if not null, the logout message that is causing a logout to be sent
      * @param text
      */
-    private void generateLogout(Message otherLogout, String text) {
+    private void generateLogout(final Message otherLogout, final String text) {
         final Message logout = messageFactory.create(sessionID.getBeginString(), MsgType.LOGOUT);
         initializeHeader(logout.getHeader());
         if (text != null && !"".equals(text)) {
@@ -1351,7 +1357,7 @@ public class Session implements Closeable {
         state.setLogoutSent(true);
     }
 
-    private void nextSequenceReset(Message sequenceReset) throws IOException, RejectLogon,
+    private void nextSequenceReset(final Message sequenceReset) throws IOException, RejectLogon,
             FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         boolean isGapFill = false;
         if (sequenceReset.isSetField(GapFillFlag.FIELD)) {
@@ -1396,7 +1402,8 @@ public class Session implements Closeable {
         }
     }
 
-    private void generateReject(Message message, String str) throws FieldNotFound, IOException {
+    private void generateReject(final Message message, final String str) throws FieldNotFound,
+            IOException {
         final String beginString = sessionID.getBeginString();
         final Message reject = messageFactory.create(beginString, MsgType.REJECT);
         final Header header = message.getHeader();
@@ -1422,13 +1429,13 @@ public class Session implements Closeable {
 
     }
 
-    private boolean isPossibleDuplicate(Message message) throws FieldNotFound {
+    private boolean isPossibleDuplicate(final Message message) throws FieldNotFound {
         final Header header = message.getHeader();
         return header.isSetField(PossDupFlag.FIELD) && header.getBoolean(PossDupFlag.FIELD);
     }
 
-    private void generateReject(Message message, int err, int field) throws IOException,
-            FieldNotFound {
+    private void generateReject(final Message message, final int err, final int field)
+            throws IOException, FieldNotFound {
         final String reason = SessionRejectReasonText.getMessage(err);
         if (!state.isLogonReceived()) {
             final String errorMessage = "Tried to send a reject while not logged on: " + reason
@@ -1497,12 +1504,12 @@ public class Session implements Closeable {
         sendRaw(reject, 0);
     }
 
-    private void setRejectReason(Message reject, String reason) {
+    private void setRejectReason(final Message reject, final String reason) {
         reject.setString(Text.FIELD, reason);
     }
 
-    private void setRejectReason(Message reject, int field, String reason,
-            boolean includeFieldInReason) {
+    private void setRejectReason(final Message reject, final int field, final String reason,
+            final boolean includeFieldInReason) {
         boolean isRejectMessage;
         try {
             isRejectMessage = MsgType.REJECT.equals(reject.getHeader().getString(MsgType.FIELD));
@@ -1518,8 +1525,8 @@ public class Session implements Closeable {
         }
     }
 
-    private void generateBusinessReject(Message message, int err, int field) throws FieldNotFound,
-            IOException {
+    private void generateBusinessReject(final Message message, final int err, final int field)
+            throws FieldNotFound, IOException {
         final Message reject = messageFactory.create(sessionID.getBeginString(),
                 MsgType.BUSINESS_MESSAGE_REJECT);
         initializeHeader(reject.getHeader());
@@ -1539,7 +1546,7 @@ public class Session implements Closeable {
         sendRaw(reject, 0);
     }
 
-    private void nextTestRequest(Message testRequest) throws FieldNotFound, RejectLogon,
+    private void nextTestRequest(final Message testRequest) throws FieldNotFound, RejectLogon,
             IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
             InvalidMessage {
         if (!verify(testRequest)) {
@@ -1550,7 +1557,7 @@ public class Session implements Closeable {
         nextQueued();
     }
 
-    private void generateHeartbeat(Message testRequest) throws FieldNotFound {
+    private void generateHeartbeat(final Message testRequest) throws FieldNotFound {
         final Message heartbeat = messageFactory.create(sessionID.getBeginString(),
                 MsgType.HEARTBEAT);
         initializeHeader(heartbeat.getHeader());
@@ -1565,7 +1572,7 @@ public class Session implements Closeable {
         sendRaw(heartbeat, 0);
     }
 
-    private void nextHeartBeat(Message heartBeat) throws FieldNotFound, RejectLogon,
+    private void nextHeartBeat(final Message heartBeat) throws FieldNotFound, RejectLogon,
             IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
             InvalidMessage {
         if (!verify(heartBeat)) {
@@ -1575,7 +1582,7 @@ public class Session implements Closeable {
         nextQueued();
     }
 
-    private boolean verify(Message msg, boolean checkTooHigh, boolean checkTooLow)
+    private boolean verify(final Message msg, final boolean checkTooHigh, final boolean checkTooLow)
             throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
             UnsupportedMessageType, IOException {
 
@@ -1616,10 +1623,10 @@ public class Session implements Closeable {
                 doTargetTooLow(msg);
                 return false;
             }
-            if (Logon.MSGTYPE.equals(msgType) && checkTooLow && isOtherSideTooHigh(msg)) {
-                doOtherSideTooHigh(msg);
-                return false;
-            }
+            //            if (Logon.MSGTYPE.equals(msgType) && checkTooLow && isOtherSideTooHigh(msg)) {
+            //                doOtherSideTooHigh(msg);
+            //                return false;
+            //            }
 
             // Handle poss dup where msgSeq is as expected
             // FIX 4.4 Vol 2, test case 2f&g
@@ -1655,7 +1662,7 @@ public class Session implements Closeable {
         return true;
     }
 
-    private boolean isOtherSideTooHigh(Message msg) throws FieldNotFound, IOException {
+    private boolean isOtherSideTooHigh(final Message msg) throws FieldNotFound, IOException {
         if (msg.isSetField(NextExpectedMsgSeqNum.FIELD)) {
             final int sequence = msg.getInt(NextExpectedMsgSeqNum.FIELD);
             return sequence > state.getNextSenderMsgSeqNum();
@@ -1663,7 +1670,7 @@ public class Session implements Closeable {
         return false;
     }
 
-    private boolean doTargetTooLow(Message msg) throws FieldNotFound, IOException {
+    private boolean doTargetTooLow(final Message msg) throws FieldNotFound, IOException {
         if (!isPossibleDuplicate(msg)) {
             final int msgSeqNum = msg.getHeader().getInt(MsgSeqNum.FIELD);
 
@@ -1675,7 +1682,7 @@ public class Session implements Closeable {
         return validatePossDup(msg);
     }
 
-    private boolean doOtherSideTooHigh(Message msg) throws FieldNotFound, IOException {
+    private boolean doOtherSideTooHigh(final Message msg) throws FieldNotFound, IOException {
         if (!isPossibleDuplicate(msg)) {
 
             final String text = "Tag 789 (NextExpectedMsgSeqNum) is higher than expected. Expected "
@@ -1688,12 +1695,12 @@ public class Session implements Closeable {
         return validatePossDup(msg);
     }
 
-    private void doBadCompID(Message msg) throws IOException, FieldNotFound {
+    private void doBadCompID(final Message msg) throws IOException, FieldNotFound {
         generateReject(msg, SessionRejectReason.COMPID_PROBLEM, 0);
         generateLogout();
     }
 
-    private void doBadTime(Message msg) throws IOException, FieldNotFound {
+    private void doBadTime(final Message msg) throws IOException, FieldNotFound {
         try {
             generateReject(msg, SessionRejectReason.SENDINGTIME_ACCURACY_PROBLEM, 0);
             generateLogout();
@@ -1703,14 +1710,14 @@ public class Session implements Closeable {
         }
     }
 
-    private boolean isGoodTime(Date sendingTime) {
+    private boolean isGoodTime(final Date sendingTime) {
         if (!checkLatency) {
             return true;
         }
         return Math.abs(SystemTime.currentTimeMillis() - sendingTime.getTime()) / 1000 <= maxLatency;
     }
 
-    private void fromCallback(String msgType, Message msg, SessionID sessionID2)
+    private void fromCallback(final String msgType, final Message msg, final SessionID sessionID2)
             throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
             UnsupportedMessageType {
         // Application exceptions will prevent the incoming sequence number from being incremented
@@ -1723,7 +1730,7 @@ public class Session implements Closeable {
         }
     }
 
-    private synchronized boolean validLogonState(String msgType) {
+    private synchronized boolean validLogonState(final String msgType) {
         if (msgType.equals(MsgType.LOGON) && state.isResetSent() || state.isResetReceived()) {
             return true;
         }
@@ -1746,8 +1753,8 @@ public class Session implements Closeable {
         return false;
     }
 
-    private boolean verify(Message message) throws RejectLogon, FieldNotFound, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException {
+    private boolean verify(final Message message) throws RejectLogon, FieldNotFound,
+            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
         return verify(message, validateSequenceNumbers, validateSequenceNumbers);
     }
 
@@ -1858,7 +1865,7 @@ public class Session implements Closeable {
         sendRaw(heartbeat, 0);
     }
 
-    public void generateTestRequest(String id) {
+    public void generateTestRequest(final String id) {
         state.incrementTestRequestCounter();
         final Message testRequest = messageFactory.create(sessionID.getBeginString(),
                 MsgType.TEST_REQUEST);
@@ -1915,7 +1922,7 @@ public class Session implements Closeable {
      * @throws IOException
      *             IO error
      */
-    public void disconnect(String reason, boolean logError) throws IOException {
+    public void disconnect(final String reason, final boolean logError) throws IOException {
         synchronized (responderSync) {
             if (!hasResponder()) {
                 getLog().onEvent("Already disconnected: " + reason);
@@ -1964,8 +1971,9 @@ public class Session implements Closeable {
         }
     }
 
-    private void nextLogon(Message logon) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
+    private void nextLogon(final Message logon) throws FieldNotFound, RejectLogon,
+            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+            InvalidMessage {
 
         // QFJ-357
         // If this check is not done here, the Logon would be accepted and
@@ -2070,8 +2078,9 @@ public class Session implements Closeable {
         }
     }
 
-    private boolean nextQueued(int num) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
+    private boolean nextQueued(final int num) throws FieldNotFound, RejectLogon,
+            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+            InvalidMessage {
         final Message msg = state.dequeue(num);
 
         if (msg != null) {
@@ -2089,7 +2098,7 @@ public class Session implements Closeable {
         return false;
     }
 
-    private void next(String msg) throws InvalidMessage, FieldNotFound, RejectLogon,
+    private void next(final String msg) throws InvalidMessage, FieldNotFound, RejectLogon,
             IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
         try {
             next(parseMessage(msg));
@@ -2107,7 +2116,8 @@ public class Session implements Closeable {
         }
     }
 
-    private void doTargetTooHigh(Message msg) throws FieldNotFound, IOException, InvalidMessage {
+    private void doTargetTooHigh(final Message msg) throws FieldNotFound, IOException,
+            InvalidMessage {
         final Message.Header header = msg.getHeader();
         final String beginString = header.getString(BeginString.FIELD);
         final int msgSeqNum = header.getInt(MsgSeqNum.FIELD);
@@ -2135,7 +2145,7 @@ public class Session implements Closeable {
         generateResendRequest(beginString, msgSeqNum);
     }
 
-    private void generateResendRequest(String beginString, int msgSeqNum) {
+    private void generateResendRequest(final String beginString, final int msgSeqNum) {
 
         final int beginSeqNo = getExpectedTargetNum();
         final int endSeqNo = msgSeqNum - 1;
@@ -2143,7 +2153,8 @@ public class Session implements Closeable {
 
     }
 
-    private void sendResendRequest(String beginString, int msgSeqNum, int beginSeqNo, int endSeqNo) {
+    private void sendResendRequest(final String beginString, final int msgSeqNum,
+            final int beginSeqNo, int endSeqNo) {
 
         int lastEndSeqNoSent = resendRequestChunkSize == 0 ? endSeqNo : beginSeqNo
                 + resendRequestChunkSize - 1;
@@ -2172,7 +2183,7 @@ public class Session implements Closeable {
 
     }
 
-    private boolean validatePossDup(Message msg) throws FieldNotFound, IOException {
+    private boolean validatePossDup(final Message msg) throws FieldNotFound, IOException {
         final Message.Header header = msg.getHeader();
         final String msgType = header.getString(MsgType.FIELD);
         final Date sendingTime = header.getUtcTimeStamp(SendingTime.FIELD);
@@ -2202,11 +2213,11 @@ public class Session implements Closeable {
         return true;
     }
 
-    private boolean isTargetTooHigh(int sequence) throws IOException {
+    private boolean isTargetTooHigh(final int sequence) throws IOException {
         return sequence > state.getNextTargetMsgSeqNum();
     }
 
-    private void generateLogon(Message otherLogon) throws FieldNotFound {
+    private void generateLogon(final Message otherLogon) throws FieldNotFound {
         final Message logon = messageFactory.create(sessionID.getBeginString(), MsgType.LOGON);
         logon.setInt(EncryptMethod.FIELD, EncryptMethod.NONE_OTHER);
         if (state.isResetReceived()) {
@@ -2236,7 +2247,7 @@ public class Session implements Closeable {
      * @param num is the seq num of the message to send, if 0,
      * @return
      */
-    private boolean sendRaw(Message message, int num) {
+    private boolean sendRaw(final Message message, final int num) {
         // sequence number must be locked until application
         // callback returns since it may be effectively rolled
         // back if the callback fails.
@@ -2341,13 +2352,13 @@ public class Session implements Closeable {
      * @return a status flag indicating whether the write to the network layer was successful.
      *
      */
-    public boolean send(Message message) {
+    public boolean send(final Message message) {
         message.getHeader().removeField(PossDupFlag.FIELD);
         message.getHeader().removeField(OrigSendingTime.FIELD);
         return sendRaw(message, 0);
     }
 
-    private boolean send(String messageString) {
+    private boolean send(final String messageString) {
         getLog().onOutgoing(messageString);
         synchronized (responderSync) {
             if (!hasResponder()) {
@@ -2358,7 +2369,7 @@ public class Session implements Closeable {
         }
     }
 
-    private boolean isCorrectCompID(String senderCompID, String targetCompID) {
+    private boolean isCorrectCompID(final String senderCompID, final String targetCompID) {
         if (!checkCompID) {
             return true;
         }
@@ -2373,7 +2384,7 @@ public class Session implements Closeable {
      * @param dataDictionary
      */
     @Deprecated
-    public void setDataDictionary(DataDictionary dataDictionary) {
+    public void setDataDictionary(final DataDictionary dataDictionary) {
         throw new UnsupportedOperationException(
                 "Modification of session dictionary is not supported in QFJ");
     }
@@ -2411,7 +2422,7 @@ public class Session implements Closeable {
      * @param sessionID
      * @return true if session exists, false otherwise.
      */
-    public static boolean doesSessionExist(SessionID sessionID) {
+    public static boolean doesSessionExist(final SessionID sessionID) {
         return sessions.containsKey(sessionID);
     }
 
@@ -2427,7 +2438,7 @@ public class Session implements Closeable {
      * Sets the timeout for waiting for a logon response.
      * @param seconds the timeout in seconds
      */
-    public void setLogonTimeout(int seconds) {
+    public void setLogonTimeout(final int seconds) {
         state.setLogonTimeout(seconds);
     }
 
@@ -2435,7 +2446,7 @@ public class Session implements Closeable {
      * Sets the timeout for waiting for a logout response.
      * @param seconds the timeout in seconds
      */
-    public void setLogoutTimeout(int seconds) {
+    public void setLogoutTimeout(final int seconds) {
         state.setLogoutTimeout(seconds);
     }
 
@@ -2444,7 +2455,7 @@ public class Session implements Closeable {
      *
      * @param heartbeatInterval
      */
-    public void setHeartBeatInterval(int heartbeatInterval) {
+    public void setHeartBeatInterval(final int heartbeatInterval) {
         state.setHeartBeatInterval(heartbeatInterval);
     }
 
@@ -2532,11 +2543,11 @@ public class Session implements Closeable {
         return s;
     }
 
-    public void addStateListener(SessionStateListener listener) {
+    public void addStateListener(final SessionStateListener listener) {
         stateListeners.addListener(listener);
     }
 
-    public void removeStateListener(SessionStateListener listener) {
+    public void removeStateListener(final SessionStateListener listener) {
         stateListeners.removeListener(listener);
     }
 
@@ -2554,7 +2565,7 @@ public class Session implements Closeable {
         return targetDefaultApplVerID.get();
     }
 
-    private static String extractNumber(String txt, int from) {
+    private static String extractNumber(final String txt, final int from) {
         String ret = "";
         for (int i = from; i != txt.length(); ++i) {
             final char c = txt.charAt(i);
@@ -2569,7 +2580,7 @@ public class Session implements Closeable {
         return ret.trim();
     }
 
-    protected static Integer extractExpectedSequenceNumber(String txt) {
+    protected static Integer extractExpectedSequenceNumber(final String txt) {
         if (txt == null) {
             return null;
         }
@@ -2594,19 +2605,19 @@ public class Session implements Closeable {
         }
     }
 
-    public void setIgnoreHeartBeatFailure(boolean ignoreHeartBeatFailure) {
+    public void setIgnoreHeartBeatFailure(final boolean ignoreHeartBeatFailure) {
         disableHeartBeatCheck = ignoreHeartBeatFailure;
     }
 
-    public void setRejectInvalidMessage(boolean rejectInvalidMessage) {
+    public void setRejectInvalidMessage(final boolean rejectInvalidMessage) {
         this.rejectInvalidMessage = rejectInvalidMessage;
     }
 
-    public void setForceResendWhenCorruptedStore(boolean forceResendWhenCorruptedStore) {
+    public void setForceResendWhenCorruptedStore(final boolean forceResendWhenCorruptedStore) {
         this.forceResendWhenCorruptedStore = forceResendWhenCorruptedStore;
     }
 
-    public boolean isAllowedForSession(InetAddress remoteInetAddress) {
+    public boolean isAllowedForSession(final InetAddress remoteInetAddress) {
         if (allowedRemoteAddresses == null || allowedRemoteAddresses.isEmpty()) {
             return true;
         }
@@ -2622,7 +2633,7 @@ public class Session implements Closeable {
         closeIfCloseable(getStore());
     }
 
-    private void closeIfCloseable(Object resource) throws IOException {
+    private void closeIfCloseable(final Object resource) throws IOException {
         if (resource instanceof Closeable) {
             ((Closeable) resource).close();
         }
