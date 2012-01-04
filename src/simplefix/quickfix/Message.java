@@ -1,49 +1,77 @@
-/*******************************************************************************
- * Copyright (c) quickfixengine.org  All rights reserved. 
- * 
- * This file is part of the QuickFIX FIX Engine 
- * 
- * This file may be distributed under the terms of the quickfixengine.org 
- * license as defined by quickfixengine.org and appearing in the file 
- * LICENSE included in the packaging of this file. 
- * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING 
- * THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A 
- * PARTICULAR PURPOSE. 
- * 
- * See http://www.quickfixengine.org/LICENSE for licensing information. 
- * 
- * Contact ask@quickfixengine.org if any conditions of this licensing 
- * are not clear to you.
- ******************************************************************************/
-
 package simplefix.quickfix;
 
+import quickfix.FieldNotFound;
+import quickfix.InvalidMessage;
 import simplefix.MsgType;
 import simplefix.Tag;
 
 public class Message implements simplefix.Message {
 
     quickfix.Message _msg;
+    MsgType _type;
+
+    public Message(final MsgType type) {
+        _type = type;
+        _msg = new quickfix.Message();
+        _msg.setString(35, type.getTypeString());
+    }
+
+    public Message(final String msg) {
+
+        try {
+            _msg = new quickfix.Message(msg);
+
+            try {
+                _type = MsgType.fromString(_msg.getHeader().getString(35));
+            } catch (FieldNotFound e) {
+                e.printStackTrace();
+            }
+
+        } catch (InvalidMessage e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 
     public Message(final quickfix.Message msg) {
         super();
-        this._msg = msg;
+        _msg = msg;
+        try {
+            _type = MsgType.fromString(msg.getHeader().getString(35));
+        } catch (FieldNotFound e) {
+            e.printStackTrace();
+        }
     }
 
     public MsgType getMsgType() {
-        // TODO Auto-generated method stub
-        return null;
+        return _type;
     }
 
     public Object getValue(final Tag tag) {
-        // TODO Auto-generated method stub
+        String str;
+        try {
+            str = _msg.getString(tag.getTagNum());
+            if (str != null) {
+                return str;
+            }
+            str = _msg.getHeader().getString(tag.getTagNum());
+            if (str != null) {
+                return str;
+            }
+            str = _msg.getTrailer().getString(tag.getTagNum());
+            if (str != null) {
+                return str;
+            }
+        } catch (FieldNotFound e) {
+            e.printStackTrace();
+        }
+        ;
         return null;
     }
 
     public void setValue(final Tag tag, final Object value) {
-        // TODO Auto-generated method stub
-
+        _msg.setString(tag.getTagNum(), value.toString());
     }
 
 }

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MsgType {
-    
+
     HEARTBEAT("0"),
     TEST_REQUEST("1"),
     RESEND_REQUEST("2"),
@@ -112,29 +112,33 @@ public enum MsgType {
     CONTRARY_INTENTION_REPORT("BO"),
     SECURITY_DEFINITION_UPDATE_REPORT("BP"),
     INVALID("");
-    
+
     private String _type;
-    
+
     private MsgType(final String type) {
-	_type = type;
+        _type = type;
     }
-    
+
+    public String getTypeString() {
+        return _type;
+    }
+
     private static Map<String, MsgType> _typeMap = new HashMap<String, MsgType>();
-    
+
     static {
-	for ( MsgType type : MsgType.values() ) {
-	    if ( !INVALID.equals(type) ) {
-		_typeMap.put(type._type, type);
-	    }
-	}
+        for (MsgType type : MsgType.values()) {
+            if (!INVALID.equals(type)) {
+                _typeMap.put(type._type, type);
+            }
+        }
     }
-    
+
     public static MsgType fromString(final String string) {
-	MsgType type = _typeMap.get(string);
-	if ( type != null ) {
-	    return type;
-	}
-	return INVALID;
+        MsgType type = _typeMap.get(string);
+        if (type != null) {
+            return type;
+        }
+        return INVALID;
     }
-    
+
 }

@@ -2,10 +2,14 @@ package simplefix.examples;
 
 import simplefix.Application;
 import simplefix.Engine;
+import simplefix.EngineFactory;
 import simplefix.Message;
+import simplefix.MsgType;
 import simplefix.Session;
 
 public class Executor {
+
+    private static EngineFactory _engineFact;
 
     public static void main(final String args[]) throws Exception {
         try {
@@ -15,9 +19,10 @@ public class Executor {
             Class<?> classobj = Class.forName(engineName);
             Object engineobj = classobj.newInstance();
 
-            if (engineobj instanceof Engine) {
+            if (engineobj instanceof EngineFactory) {
 
-                Engine engine = (Engine) engineobj;
+                _engineFact = (EngineFactory) engineobj;
+                Engine engine = _engineFact.getEngine();
                 engine.initEngine(initParas);
 
                 Application application = new _Application();
@@ -51,7 +56,12 @@ public class Executor {
         }
 
         public void onAppMessage(final Message message, final Session sessionId) {
-            // TODO Auto-generated method stub
+            if (MsgType.ORDER_SINGLE.equals(message.getMsgType())) {
+                Message replyMsg = _engineFact.createMessage(MsgType.EXECUTION_REPORT);
+
+                sessionId.sendAppMessage(replyMsg);
+
+            }
 
         }
 
