@@ -1,8 +1,8 @@
 package simplefix.quickfix;
 
 import quickfix.SessionID;
+import quickfix.SessionNotFound;
 import simplefix.FixVersion;
-import simplefix.Message;
 
 public class Session implements simplefix.Session {
 
@@ -10,7 +10,7 @@ public class Session implements simplefix.Session {
 
     public Session(final SessionID session) {
         super();
-        this._session = session;
+        _session = session;
     }
 
     public FixVersion getFixVersion() {
@@ -28,9 +28,23 @@ public class Session implements simplefix.Session {
         return null;
     }
 
-    public void sendAppMessage(final Message message) {
-        // TODO Auto-generated method stub
+    public void sendAppMessage(final simplefix.Message msg) {
+
+        quickfix.Message message;
+        if (msg instanceof Message) {
+            message = ((Message) msg)._msg;
+        } else {
+            return;
+        }
+        try {
+            quickfix.Session session = quickfix.Session.lookupSession(_session);
+            if (session == null) {
+                throw new SessionNotFound(_session.toString());
+            }
+            session.send(message);
+        } catch (SessionNotFound e) {
+            e.printStackTrace();
+        }
 
     }
-
 }
