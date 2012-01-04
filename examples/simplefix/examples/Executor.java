@@ -6,6 +6,7 @@ import simplefix.EngineFactory;
 import simplefix.Message;
 import simplefix.MsgType;
 import simplefix.Session;
+import simplefix.Tag;
 
 public class Executor {
 
@@ -59,12 +60,41 @@ public class Executor {
             if (MsgType.ORDER_SINGLE.equals(message.getMsgType())) {
                 Message replyMsg = _engineFact.createMessage(MsgType.EXECUTION_REPORT);
 
+                replyMsg.setValue(Tag.OrderID, genOrderID());
+                replyMsg.setValue(Tag.ExecID, genExecID());
+
+                replyMsg.setValue(Tag.ExecTransType, "0");
+                replyMsg.setValue(Tag.ExecType, "2");
+                replyMsg.setValue(Tag.OrdStatus, "2");
+
+                replyMsg.setValue(Tag.ClOrdID, message.getValue(Tag.ClOrdID));
+                replyMsg.setValue(Tag.Symbol, message.getValue(Tag.Symbol));
+                replyMsg.setValue(Tag.Side, message.getValue(Tag.Side));
+                replyMsg.setValue(Tag.OrderQty, message.getValue(Tag.OrderQty));
+                replyMsg.setValue(Tag.Price, message.getValue(Tag.Price));
+
+                replyMsg.setValue(Tag.LeavesQty, "0");
+                replyMsg.setValue(Tag.CumQty, message.getValue(Tag.OrderQty));
+                replyMsg.setValue(Tag.AvgPx, message.getValue(Tag.Price));
+                replyMsg.setValue(Tag.LastPx, message.getValue(Tag.Price));
+                replyMsg.setValue(Tag.LastQty, message.getValue(Tag.OrderQty));
+
                 sessionId.sendAppMessage(replyMsg);
 
             }
 
         }
 
+        public int genOrderID() {
+            return ++m_orderID;
+        }
+
+        public int genExecID() {
+            return ++m_execID;
+        }
+
+        private int m_orderID = 0;
+        private int m_execID = 0;
     }
 
 }
