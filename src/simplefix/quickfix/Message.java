@@ -13,7 +13,7 @@ public class Message implements simplefix.Message {
     public Message(final MsgType type) {
         _type = type;
         _msg = new quickfix.Message();
-        _msg.setString(35, type.getTypeString());
+        _msg.getHeader().setString(35, type.getTypeString());
     }
 
     public Message(final String msg) {
