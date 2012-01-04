@@ -14,7 +14,7 @@ public class Application implements quickfix.Application {
 
     public Application(final simplefix.Application app) {
         super();
-        this._app = app;
+        _app = app;
     }
 
     public void onCreate(final SessionID sessionId) {
