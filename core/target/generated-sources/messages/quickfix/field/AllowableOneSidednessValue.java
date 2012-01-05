@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class AllowableOneSidednessValue extends DoubleField {
+public class AllowableOneSidednessValue extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 766;
 
@@ -29,7 +29,11 @@ public class AllowableOneSidednessValue extends DoubleField {
         super(766);
     }
 
-    public AllowableOneSidednessValue(double data) {
+    public AllowableOneSidednessValue(java.math.BigDecimal data) {
         super(766, data);
+    }
+
+    public AllowableOneSidednessValue(double data) {
+        super(766, new java.math.BigDecimal(data));
     }
 }

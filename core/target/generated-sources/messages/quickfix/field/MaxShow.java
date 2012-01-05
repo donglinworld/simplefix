@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class MaxShow extends DoubleField {
+public class MaxShow extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 210;
 
@@ -29,7 +29,11 @@ public class MaxShow extends DoubleField {
         super(210);
     }
 
-    public MaxShow(double data) {
+    public MaxShow(java.math.BigDecimal data) {
         super(210, data);
+    }
+
+    public MaxShow(double data) {
+        super(210, new java.math.BigDecimal(data));
     }
 }

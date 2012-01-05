@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class DiscretionOffset extends DoubleField {
+public class DiscretionOffset extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 389;
 
@@ -29,7 +29,11 @@ public class DiscretionOffset extends DoubleField {
         super(389);
     }
 
-    public DiscretionOffset(double data) {
+    public DiscretionOffset(java.math.BigDecimal data) {
         super(389, data);
+    }
+
+    public DiscretionOffset(double data) {
+        super(389, new java.math.BigDecimal(data));
     }
 }

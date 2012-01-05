@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class SettlCurrAmt extends DoubleField {
+public class SettlCurrAmt extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 119;
 
@@ -29,7 +29,11 @@ public class SettlCurrAmt extends DoubleField {
         super(119);
     }
 
-    public SettlCurrAmt(double data) {
+    public SettlCurrAmt(java.math.BigDecimal data) {
         super(119, data);
+    }
+
+    public SettlCurrAmt(double data) {
+        super(119, new java.math.BigDecimal(data));
     }
 }

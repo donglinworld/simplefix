@@ -34,7 +34,7 @@
 		<antcall target="format.generated.code" />
 	</target>
 
-	<property name="generator.decimal" value="false" />
+	<property name="generator.decimal" value="true" />
 	<property name="generator.orderedFields" value="false" />
 
 	<target name="regenerate.code">

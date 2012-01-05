@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class AvgParPx extends DoubleField {
+public class AvgParPx extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 860;
 
@@ -29,7 +29,11 @@ public class AvgParPx extends DoubleField {
         super(860);
     }
 
-    public AvgParPx(double data) {
+    public AvgParPx(java.math.BigDecimal data) {
         super(860, data);
+    }
+
+    public AvgParPx(double data) {
+        super(860, new java.math.BigDecimal(data));
     }
 }

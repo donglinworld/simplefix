@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class ThresholdAmount extends DoubleField {
+public class ThresholdAmount extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 834;
 
@@ -29,7 +29,11 @@ public class ThresholdAmount extends DoubleField {
         super(834);
     }
 
-    public ThresholdAmount(double data) {
+    public ThresholdAmount(java.math.BigDecimal data) {
         super(834, data);
+    }
+
+    public ThresholdAmount(double data) {
+        super(834, new java.math.BigDecimal(data));
     }
 }

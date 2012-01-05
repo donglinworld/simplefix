@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class OutMainCntryUIndex extends DoubleField {
+public class OutMainCntryUIndex extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 412;
 
@@ -29,7 +29,11 @@ public class OutMainCntryUIndex extends DoubleField {
         super(412);
     }
 
-    public OutMainCntryUIndex(double data) {
+    public OutMainCntryUIndex(java.math.BigDecimal data) {
         super(412, data);
+    }
+
+    public OutMainCntryUIndex(double data) {
+        super(412, new java.math.BigDecimal(data));
     }
 }

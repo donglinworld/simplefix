@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class TotalNetValue extends DoubleField {
+public class TotalNetValue extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 900;
 
@@ -29,7 +29,11 @@ public class TotalNetValue extends DoubleField {
         super(900);
     }
 
-    public TotalNetValue(double data) {
+    public TotalNetValue(java.math.BigDecimal data) {
         super(900, data);
+    }
+
+    public TotalNetValue(double data) {
+        super(900, new java.math.BigDecimal(data));
     }
 }

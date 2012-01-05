@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class MinBidSize extends DoubleField {
+public class MinBidSize extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 647;
 
@@ -29,7 +29,11 @@ public class MinBidSize extends DoubleField {
         super(647);
     }
 
-    public MinBidSize(double data) {
+    public MinBidSize(java.math.BigDecimal data) {
         super(647, data);
+    }
+
+    public MinBidSize(double data) {
+        super(647, new java.math.BigDecimal(data));
     }
 }

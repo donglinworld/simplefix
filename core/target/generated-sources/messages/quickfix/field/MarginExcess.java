@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class MarginExcess extends DoubleField {
+public class MarginExcess extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 899;
 
@@ -29,7 +29,11 @@ public class MarginExcess extends DoubleField {
         super(899);
     }
 
-    public MarginExcess(double data) {
+    public MarginExcess(java.math.BigDecimal data) {
         super(899, data);
+    }
+
+    public MarginExcess(double data) {
+        super(899, new java.math.BigDecimal(data));
     }
 }

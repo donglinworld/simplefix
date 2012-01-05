@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class PrevClosePx extends DoubleField {
+public class PrevClosePx extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 140;
 
@@ -29,7 +29,11 @@ public class PrevClosePx extends DoubleField {
         super(140);
     }
 
-    public PrevClosePx(double data) {
+    public PrevClosePx(java.math.BigDecimal data) {
         super(140, data);
+    }
+
+    public PrevClosePx(double data) {
+        super(140, new java.math.BigDecimal(data));
     }
 }
