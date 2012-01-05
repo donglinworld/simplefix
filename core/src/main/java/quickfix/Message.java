@@ -85,27 +85,28 @@ public class Message extends FieldMap {
         // empty
     }
 
-    protected Message(int[] fieldOrder) {
+    protected Message(final int[] fieldOrder) {
         super(fieldOrder);
     }
 
-    public Message(String string) throws InvalidMessage {
+    public Message(final String string) throws InvalidMessage {
         fromString(string, null, true);
     }
 
-    public Message(String string, boolean validate) throws InvalidMessage {
+    public Message(final String string, final boolean validate) throws InvalidMessage {
         fromString(string, null, validate);
     }
 
-    public Message(String string, DataDictionary dd) throws InvalidMessage {
+    public Message(final String string, final DataDictionary dd) throws InvalidMessage {
         fromString(string, dd, true);
     }
 
-    public Message(String string, DataDictionary dd, boolean validate) throws InvalidMessage {
+    public Message(final String string, final DataDictionary dd, final boolean validate)
+            throws InvalidMessage {
         fromString(string, dd, validate);
     }
 
-    public static boolean InitializeXML(String url) {
+    public static boolean InitializeXML(final String url) {
         throw new UnsupportedOperationException();
     }
 
@@ -121,7 +122,7 @@ public class Message extends FieldMap {
         }
     }
 
-    private Object cloneTo(Message message) {
+    private Object cloneTo(final Message message) {
         message.initializeFrom(this);
         message.header.initializeFrom(getHeader());
         message.trailer.initializeFrom(getTrailer());
@@ -147,7 +148,7 @@ public class Message extends FieldMap {
 
     private static DecimalFormat checksumFormat = new DecimalFormat("000");
 
-    private int checkSum(String s) {
+    private int checkSum(final String s) {
         final int offset = s.lastIndexOf("\00110=");
         int sum = 0;
         for (int i = 0; i < offset; i++) {
@@ -161,67 +162,67 @@ public class Message extends FieldMap {
                 .calculateTotal()) % 256);
     }
 
-    public void headerAddGroup(Group group) {
+    public void headerAddGroup(final Group group) {
         header.addGroup(group);
     }
 
-    public void headerReplaceGroup(int num, Group group) {
+    public void headerReplaceGroup(final int num, final Group group) {
         header.replaceGroup(num, group);
     }
 
-    public Group headerGetGroup(int num, Group group) throws FieldNotFound {
+    public Group headerGetGroup(final int num, final Group group) throws FieldNotFound {
         return header.getGroup(num, group);
     }
 
-    public void headerRemoveGroup(Group group) {
+    public void headerRemoveGroup(final Group group) {
         header.removeGroup(group);
     }
 
-    public boolean headerHasGroup(int field) {
+    public boolean headerHasGroup(final int field) {
         return header.hasGroup(field);
     }
 
-    public boolean headerHasGroup(int num, int field) {
+    public boolean headerHasGroup(final int num, final int field) {
         return header.hasGroup(num, field);
     }
 
-    public boolean headerHasGroup(int num, Group group) {
+    public boolean headerHasGroup(final int num, final Group group) {
         return headerHasGroup(num, group.getFieldTag());
     }
 
-    public boolean headerHasGroup(Group group) {
+    public boolean headerHasGroup(final Group group) {
         return headerHasGroup(group.getFieldTag());
     }
 
-    public void trailerAddGroup(Group group) {
+    public void trailerAddGroup(final Group group) {
         trailer.addGroup(group);
     }
 
-    public Group trailerGetGroup(int num, Group group) throws FieldNotFound {
+    public Group trailerGetGroup(final int num, final Group group) throws FieldNotFound {
         return trailer.getGroup(num, group);
     }
 
-    public void trailerReplaceGroup(int num, Group group) {
+    public void trailerReplaceGroup(final int num, final Group group) {
         trailer.replaceGroup(num, group);
     }
 
-    public void trailerRemoveGroup(Group group) {
+    public void trailerRemoveGroup(final Group group) {
         trailer.removeGroup(group);
     }
 
-    public boolean trailerHasGroup(int field) {
+    public boolean trailerHasGroup(final int field) {
         return trailer.hasGroup(field);
     }
 
-    public boolean trailerHasGroup(int num, int field) {
+    public boolean trailerHasGroup(final int num, final int field) {
         return trailer.hasGroup(num, field);
     }
 
-    public boolean trailerHasGroup(int num, Group group) {
+    public boolean trailerHasGroup(final int num, final Group group) {
         return trailerHasGroup(num, group.getFieldTag());
     }
 
-    public boolean trailerHasGroup(Group group) {
+    public boolean trailerHasGroup(final Group group) {
         return trailerHasGroup(group.getFieldTag());
     }
 
@@ -248,7 +249,7 @@ public class Message extends FieldMap {
      * @param dataDictionary
      * @return the XML representation of the message
      */
-    public String toXML(DataDictionary dataDictionary) {
+    public String toXML(final DataDictionary dataDictionary) {
         try {
             final Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                     .newDocument();
@@ -271,8 +272,8 @@ public class Message extends FieldMap {
         }
     }
 
-    private void toXMLFields(Element message, String section, FieldMap fieldMap,
-            DataDictionary dataDictionary) throws FieldNotFound {
+    private void toXMLFields(final Element message, final String section, final FieldMap fieldMap,
+            final DataDictionary dataDictionary) throws FieldNotFound {
         final Document document = message.getOwnerDocument();
         final Element fields = document.createElement(section);
         message.appendChild(fields);
@@ -359,7 +360,8 @@ public class Message extends FieldMap {
                 MsgType.FIELD };
 
         @Override
-        protected void calculateString(StringBuffer buffer, int[] excludedFields, int[] postFields) {
+        protected void calculateString(final StringBuffer buffer, final int[] excludedFields,
+                final int[] postFields) {
             super.calculateString(buffer, EXCLUDED_HEADER_FIELDS, postFields);
         }
 
@@ -375,12 +377,13 @@ public class Message extends FieldMap {
         }
 
         @Override
-        protected void calculateString(StringBuffer buffer, int[] excludedFields, int[] postFields) {
+        protected void calculateString(final StringBuffer buffer, final int[] excludedFields,
+                final int[] postFields) {
             super.calculateString(buffer, null, new int[] { CheckSum.FIELD });
         }
     }
 
-    public void reverseRoute(Header header) throws FieldNotFound {
+    public void reverseRoute(final Header header) throws FieldNotFound {
         this.header.removeField(BeginString.FIELD);
         this.header.removeField(SenderCompID.FIELD);
         this.header.removeField(SenderSubID.FIELD);
@@ -420,7 +423,8 @@ public class Message extends FieldMap {
         }
     }
 
-    private void copyField(Header header, int fromField, int toField) throws FieldNotFound {
+    private void copyField(final Header header, final int fromField, final int toField)
+            throws FieldNotFound {
         if (header.isSetField(fromField)) {
             final String value = header.getString(fromField);
             if (value.length() > 0) {
@@ -429,7 +433,7 @@ public class Message extends FieldMap {
         }
     }
 
-    void setSessionID(SessionID sessionID) {
+    void setSessionID(final SessionID sessionID) {
         header.setString(BeginString.FIELD, sessionID.getBeginString());
         header.setString(SenderCompID.FIELD, sessionID.getSenderCompID());
         optionallySetID(header, SenderSubID.FIELD, sessionID.getSenderSubID());
@@ -439,27 +443,29 @@ public class Message extends FieldMap {
         optionallySetID(header, TargetLocationID.FIELD, sessionID.getTargetLocationID());
     }
 
-    private void optionallySetID(Header header, int field, String value) {
+    private void optionallySetID(final Header header, final int field, final String value) {
         if (!value.equals(SessionID.NOT_SET)) {
             header.setString(field, value);
         }
     }
 
-    public void fromString(String messageData, DataDictionary dd, boolean doValidation)
+    public void fromString(final String messageData, final DataDictionary dd,
+            final boolean doValidation)
             throws InvalidMessage {
         parse(messageData, dd, dd, doValidation);
     }
 
-    public void fromString(String messageData, DataDictionary sessionDictionary,
-            DataDictionary applicationDictionary, boolean doValidation) throws InvalidMessage {
+    public void fromString(final String messageData, final DataDictionary sessionDictionary,
+            DataDictionary applicationDictionary, final boolean doValidation) throws InvalidMessage {
         if (sessionDictionary.isAdminMessage(MessageUtils.getMessageType(messageData))) {
             applicationDictionary = sessionDictionary;
         }
         parse(messageData, sessionDictionary, applicationDictionary, doValidation);
     }
 
-    void parse(String messageData, DataDictionary sessionDataDictionary,
-            DataDictionary applicationDataDictionary, boolean doValidation) throws InvalidMessage {
+    void parse(final String messageData, final DataDictionary sessionDataDictionary,
+            final DataDictionary applicationDataDictionary, final boolean doValidation)
+            throws InvalidMessage {
         this.messageData = messageData;
 
         try {
@@ -474,13 +480,14 @@ public class Message extends FieldMap {
         }
     }
 
-    private void validateCheckSum(String messageData) throws InvalidMessage {
+    private void validateCheckSum(final String messageData) throws InvalidMessage {
         try {
             // Body length is checked at the protocol layer
             final int checkSum = trailer.getInt(CheckSum.FIELD);
             if (checkSum != checkSum(messageData)) {
                 // message will be ignored if checksum is wrong or missing
-                throw new InvalidMessage("Expected CheckSum=" + checkSum(messageData) + ", Received CheckSum="
+                throw new InvalidMessage("Expected CheckSum=" + checkSum(messageData)
+                        + ", Received CheckSum="
                         + checkSum + " in " + messageData);
             }
         } catch (final FieldNotFound e) {
@@ -488,7 +495,8 @@ public class Message extends FieldMap {
         }
     }
 
-    private void parseHeader(DataDictionary dd, boolean doValidation) throws InvalidMessage {
+    private void parseHeader(final DataDictionary dd, final boolean doValidation)
+            throws InvalidMessage {
         final boolean validHeaderFieldOrder = isNextField(dd, header, BeginString.FIELD)
                 && isNextField(dd, header, BodyLength.FIELD)
                 && isNextField(dd, header, MsgType.FIELD);
@@ -512,7 +520,8 @@ public class Message extends FieldMap {
         pushBack(field);
     }
 
-    private boolean isNextField(DataDictionary dd, Header fields, int tag) throws InvalidMessage {
+    private boolean isNextField(final DataDictionary dd, final Header fields, final int tag)
+            throws InvalidMessage {
         final StringField field = extractField(dd, header);
         if (field == null || field.getTag() != tag) {
             return false;
@@ -531,7 +540,8 @@ public class Message extends FieldMap {
         return res;
     }
 
-    private void parseBody(DataDictionary dd, boolean doValidation) throws InvalidMessage {
+    private void parseBody(final DataDictionary dd, final boolean doValidation)
+            throws InvalidMessage {
         StringField field = extractField(dd, this);
         while (field != null) {
             if (isTrailerField(field.getField())) {
@@ -547,8 +557,11 @@ public class Message extends FieldMap {
                 if (dd != null && dd.isGroup(DataDictionary.HEADER_ID, field.getField())) {
                     parseGroup(DataDictionary.HEADER_ID, field, dd, header);
                 }
-                if (doValidation && dd != null && dd.isCheckFieldsOutOfOrder()) throw new FieldException(SessionRejectReason.TAG_SPECIFIED_OUT_OF_REQUIRED_ORDER,
-                        field.getTag());
+                if (doValidation && dd != null && dd.isCheckFieldsOutOfOrder()) {
+                    throw new FieldException(
+                            SessionRejectReason.TAG_SPECIFIED_OUT_OF_REQUIRED_ORDER,
+                            field.getTag());
+                }
             } else {
                 setField(this, field);
                 // Group case
@@ -557,19 +570,19 @@ public class Message extends FieldMap {
                 }
             }
 
-
             field = extractField(dd, this);
         }
     }
 
-    private void setField(FieldMap fields, StringField field) {
+    private void setField(final FieldMap fields, final StringField field) {
         if (fields.isSetField(field)) {
             throw new FieldException(SessionRejectReason.TAG_APPEARS_MORE_THAN_ONCE, field.getTag());
         }
         fields.setField(field);
     }
 
-    private void parseGroup(String msgType, StringField field, DataDictionary dd, FieldMap parent)
+    private void parseGroup(final String msgType, StringField field, final DataDictionary dd,
+            final FieldMap parent)
             throws InvalidMessage {
         final DataDictionary.GroupInfo rg = dd.getGroup(msgType, field.getField());
         final DataDictionary groupDataDictionary = rg.getDataDictionary();
@@ -598,7 +611,8 @@ public class Message extends FieldMap {
                         parseGroup(msgType, field, groupDataDictionary, group);
                     } else {
                         throw new InvalidMessage("The group " + groupCountTag
-                                + " must set the delimiter field " + firstField + " in " + messageData);
+                                + " must set the delimiter field " + firstField + " in "
+                                + messageData);
                     }
                 } else {
                     if (groupDataDictionary.isField(field.getTag())) {
@@ -621,7 +635,7 @@ public class Message extends FieldMap {
                             }
                         }
                         if (group != null) {
-                        group.setField(field);
+                            group.setField(field);
                         }
                     } else {
                         if (group != null) {
@@ -637,7 +651,7 @@ public class Message extends FieldMap {
         parent.setGroupCount(groupCountTag, declaredGroupCount);
     }
 
-    private int index(int[] fieldOrder, int tag) {
+    private int index(final int[] fieldOrder, final int tag) {
         for (int i = 0; i < fieldOrder.length; i++) {
             if (fieldOrder[i] == tag) {
                 return i;
@@ -646,7 +660,7 @@ public class Message extends FieldMap {
         return -1;
     }
 
-    private void parseTrailer(DataDictionary dd) throws InvalidMessage {
+    private void parseTrailer(final DataDictionary dd) throws InvalidMessage {
         StringField field = extractField(dd, trailer);
         while (field != null) {
             if (!isTrailerField(field, dd)) {
@@ -658,12 +672,12 @@ public class Message extends FieldMap {
         }
     }
 
-    static boolean isHeaderField(Field<?> field, DataDictionary dd) {
+    static boolean isHeaderField(final Field<?> field, final DataDictionary dd) {
         return isHeaderField(field.getField())
                 || (dd != null && dd.isHeaderField(field.getField()));
     }
 
-    static boolean isHeaderField(int field) {
+    public static boolean isHeaderField(final int field) {
         switch (field) {
         case BeginString.FIELD:
         case BodyLength.FIELD:
@@ -700,12 +714,12 @@ public class Message extends FieldMap {
         }
     }
 
-    static boolean isTrailerField(Field<?> field, DataDictionary dd) {
+    static boolean isTrailerField(final Field<?> field, final DataDictionary dd) {
         return isTrailerField(field.getField())
                 || (dd != null && dd.isTrailerField(field.getField()));
     }
 
-    static boolean isTrailerField(int field) {
+    public static boolean isTrailerField(final int field) {
         switch (field) {
         case SignatureLength.FIELD:
         case Signature.FIELD:
@@ -725,16 +739,17 @@ public class Message extends FieldMap {
 
     private StringField pushedBackField;
 
-    public void pushBack(StringField field) {
+    public void pushBack(final StringField field) {
         pushedBackField = field;
     }
 
-    private StringField extractField(DataDictionary dataDictionary, FieldMap fields)
+    private StringField extractField(final DataDictionary dataDictionary, final FieldMap fields)
             throws InvalidMessage {
         return extractField(null, dataDictionary, fields);
     }
 
-    private StringField extractField(Group group, DataDictionary dataDictionary, FieldMap fields)
+    private StringField extractField(final Group group, final DataDictionary dataDictionary,
+            final FieldMap fields)
             throws InvalidMessage {
         if (pushedBackField != null) {
             final StringField f = pushedBackField;
@@ -817,7 +832,7 @@ public class Message extends FieldMap {
      * @return the message type
      * @throws MessageParseError (QF JNI compatibility)
      */
-    public static MsgType identifyType(String message) throws MessageParseError {
+    public static MsgType identifyType(final String message) throws MessageParseError {
         try {
             return new MsgType(MessageUtils.getMessageType(message));
         } catch (final InvalidMessage e) {
