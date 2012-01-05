@@ -71,6 +71,13 @@ public class Message implements simplefix.Message {
     }
 
     public void setValue(final Tag tag, final Object value) {
+        if (quickfix.Message.isHeaderField(tag.getTagNum())) {
+            _msg.getHeader().setString(tag.getTagNum(), value.toString());
+            return;
+        } else if (quickfix.Message.isTrailerField(tag.getTagNum())) {
+            _msg.getTrailer().setString(tag.getTagNum(), value.toString());
+            return;
+        }
         _msg.setString(tag.getTagNum(), value.toString());
     }
 
