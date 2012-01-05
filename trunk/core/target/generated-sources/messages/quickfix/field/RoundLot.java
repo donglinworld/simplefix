@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class RoundLot extends DoubleField {
+public class RoundLot extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 561;
 
@@ -29,7 +29,11 @@ public class RoundLot extends DoubleField {
         super(561);
     }
 
-    public RoundLot(double data) {
+    public RoundLot(java.math.BigDecimal data) {
         super(561, data);
+    }
+
+    public RoundLot(double data) {
+        super(561, new java.math.BigDecimal(data));
     }
 }

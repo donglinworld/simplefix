@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class UnderlyingCurrentValue extends DoubleField {
+public class UnderlyingCurrentValue extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 885;
 
@@ -29,7 +29,11 @@ public class UnderlyingCurrentValue extends DoubleField {
         super(885);
     }
 
-    public UnderlyingCurrentValue(double data) {
+    public UnderlyingCurrentValue(java.math.BigDecimal data) {
         super(885, data);
+    }
+
+    public UnderlyingCurrentValue(double data) {
+        super(885, new java.math.BigDecimal(data));
     }
 }

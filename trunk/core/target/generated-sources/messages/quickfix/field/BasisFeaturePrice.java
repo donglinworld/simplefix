@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class BasisFeaturePrice extends DoubleField {
+public class BasisFeaturePrice extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 260;
 
@@ -29,7 +29,11 @@ public class BasisFeaturePrice extends DoubleField {
         super(260);
     }
 
-    public BasisFeaturePrice(double data) {
+    public BasisFeaturePrice(java.math.BigDecimal data) {
         super(260, data);
+    }
+
+    public BasisFeaturePrice(double data) {
+        super(260, new java.math.BigDecimal(data));
     }
 }

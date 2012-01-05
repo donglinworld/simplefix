@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class OrderCapacityQty extends DoubleField {
+public class OrderCapacityQty extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 863;
 
@@ -29,7 +29,11 @@ public class OrderCapacityQty extends DoubleField {
         super(863);
     }
 
-    public OrderCapacityQty(double data) {
+    public OrderCapacityQty(java.math.BigDecimal data) {
         super(863, data);
+    }
+
+    public OrderCapacityQty(double data) {
+        super(863, new java.math.BigDecimal(data));
     }
 }

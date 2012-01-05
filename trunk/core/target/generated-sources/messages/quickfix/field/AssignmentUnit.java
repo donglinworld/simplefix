@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class AssignmentUnit extends DoubleField {
+public class AssignmentUnit extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 745;
 
@@ -29,7 +29,11 @@ public class AssignmentUnit extends DoubleField {
         super(745);
     }
 
-    public AssignmentUnit(double data) {
+    public AssignmentUnit(java.math.BigDecimal data) {
         super(745, data);
+    }
+
+    public AssignmentUnit(double data) {
+        super(745, new java.math.BigDecimal(data));
     }
 }

@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class SharedCommission extends DoubleField {
+public class SharedCommission extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 858;
 
@@ -29,7 +29,11 @@ public class SharedCommission extends DoubleField {
         super(858);
     }
 
-    public SharedCommission(double data) {
+    public SharedCommission(java.math.BigDecimal data) {
         super(858, data);
+    }
+
+    public SharedCommission(double data) {
+        super(858, new java.math.BigDecimal(data));
     }
 }

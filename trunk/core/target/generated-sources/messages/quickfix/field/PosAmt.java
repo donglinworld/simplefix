@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class PosAmt extends DoubleField {
+public class PosAmt extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 708;
 
@@ -29,7 +29,11 @@ public class PosAmt extends DoubleField {
         super(708);
     }
 
-    public PosAmt(double data) {
+    public PosAmt(java.math.BigDecimal data) {
         super(708, data);
+    }
+
+    public PosAmt(double data) {
+        super(708, new java.math.BigDecimal(data));
     }
 }

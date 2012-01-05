@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class NetChgPrevDay extends DoubleField {
+public class NetChgPrevDay extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 451;
 
@@ -29,7 +29,11 @@ public class NetChgPrevDay extends DoubleField {
         super(451);
     }
 
-    public NetChgPrevDay(double data) {
+    public NetChgPrevDay(java.math.BigDecimal data) {
         super(451, data);
+    }
+
+    public NetChgPrevDay(double data) {
+        super(451, new java.math.BigDecimal(data));
     }
 }

@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class FairValue extends DoubleField {
+public class FairValue extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 406;
 
@@ -29,7 +29,11 @@ public class FairValue extends DoubleField {
         super(406);
     }
 
-    public FairValue(double data) {
+    public FairValue(java.math.BigDecimal data) {
         super(406, data);
+    }
+
+    public FairValue(double data) {
+        super(406, new java.math.BigDecimal(data));
     }
 }

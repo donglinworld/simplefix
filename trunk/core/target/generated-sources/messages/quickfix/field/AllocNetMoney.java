@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class AllocNetMoney extends DoubleField {
+public class AllocNetMoney extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 154;
 
@@ -29,7 +29,11 @@ public class AllocNetMoney extends DoubleField {
         super(154);
     }
 
-    public AllocNetMoney(double data) {
+    public AllocNetMoney(java.math.BigDecimal data) {
         super(154, data);
+    }
+
+    public AllocNetMoney(double data) {
+        super(154, new java.math.BigDecimal(data));
     }
 }

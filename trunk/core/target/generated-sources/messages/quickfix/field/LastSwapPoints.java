@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class LastSwapPoints extends DoubleField {
+public class LastSwapPoints extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 1071;
 
@@ -29,7 +29,11 @@ public class LastSwapPoints extends DoubleField {
         super(1071);
     }
 
-    public LastSwapPoints(double data) {
+    public LastSwapPoints(java.math.BigDecimal data) {
         super(1071, data);
+    }
+
+    public LastSwapPoints(double data) {
+        super(1071, new java.math.BigDecimal(data));
     }
 }

@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class Concession extends DoubleField {
+public class Concession extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 238;
 
@@ -29,7 +29,11 @@ public class Concession extends DoubleField {
         super(238);
     }
 
-    public Concession(double data) {
+    public Concession(java.math.BigDecimal data) {
         super(238, data);
+    }
+
+    public Concession(double data) {
+        super(238, new java.math.BigDecimal(data));
     }
 }

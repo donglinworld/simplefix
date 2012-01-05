@@ -18,10 +18,10 @@
  ******************************************************************************/
 package quickfix.field;
 
-import quickfix.DoubleField;
+import quickfix.DecimalField;
 
 
-public class MatchIncrement extends DoubleField {
+public class MatchIncrement extends DecimalField {
     static final long serialVersionUID = 20050617;
     public static final int FIELD = 1089;
 
@@ -29,7 +29,11 @@ public class MatchIncrement extends DoubleField {
         super(1089);
     }
 
-    public MatchIncrement(double data) {
+    public MatchIncrement(java.math.BigDecimal data) {
         super(1089, data);
+    }
+
+    public MatchIncrement(double data) {
+        super(1089, new java.math.BigDecimal(data));
     }
 }
