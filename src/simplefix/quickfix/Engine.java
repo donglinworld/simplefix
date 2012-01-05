@@ -22,15 +22,21 @@ import org.slf4j.LoggerFactory;
 
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
+import quickfix.DoNotSend;
 import quickfix.FieldConvertError;
+import quickfix.FieldNotFound;
 import quickfix.FileStoreFactory;
+import quickfix.IncorrectDataFormat;
+import quickfix.IncorrectTagValue;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
+import quickfix.RejectLogon;
 import quickfix.ScreenLogFactory;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 import quickfix.SocketAcceptor;
+import quickfix.UnsupportedMessageType;
 import quickfix.mina.acceptor.DynamicAcceptorSessionProvider;
 import quickfix.mina.acceptor.DynamicAcceptorSessionProvider.TemplateMapping;
 
@@ -62,7 +68,7 @@ public class Engine implements simplefix.Engine {
     public void startInProcess(final simplefix.Application app) {
 
         try {
-            Application application = new Application(app);
+            _Application application = new _Application(app);
             MessageStoreFactory messageStoreFactory = new FileStoreFactory(_settings);
             LogFactory logFactory = new ScreenLogFactory(true, true, true);
             MessageFactory messageFactory = new DefaultMessageFactory();
@@ -117,7 +123,7 @@ public class Engine implements simplefix.Engine {
     }
 
     private void configureDynamicSessions(final SessionSettings settings,
-            final Application application, final MessageStoreFactory messageStoreFactory,
+            final _Application application, final MessageStoreFactory messageStoreFactory,
             final LogFactory logFactory, final MessageFactory messageFactory) throws ConfigError,
             FieldConvertError {
         //
@@ -167,6 +173,56 @@ public class Engine implements simplefix.Engine {
             final SessionID sessionID) throws ConfigError, FieldConvertError {
         return settings.isSetting(sessionID, SETTING_ACCEPTOR_TEMPLATE)
                 && settings.getBool(sessionID, SETTING_ACCEPTOR_TEMPLATE);
+    }
+
+    private static class _Application implements quickfix.Application {
+
+        final simplefix.Application _app;
+
+        public _Application(final simplefix.Application app) {
+            super();
+            _app = app;
+        }
+
+        public void onCreate(final SessionID sessionId) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void onLogon(final SessionID sessionId) {
+            _app.onLogon(new Session(sessionId));
+
+        }
+
+        public void onLogout(final SessionID sessionId) {
+            _app.onLogout(new Session(sessionId));
+
+        }
+
+        public void toAdmin(final quickfix.Message message, final SessionID sessionId) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void fromAdmin(final quickfix.Message message, final SessionID sessionId)
+                throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void toApp(final quickfix.Message message, final SessionID sessionId)
+                throws DoNotSend {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void fromApp(final quickfix.Message message, final SessionID sessionId)
+                throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
+                UnsupportedMessageType {
+            _app.onAppMessage(new Message(message), new Session(sessionId));
+
+        }
+
     }
 
 }
