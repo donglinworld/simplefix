@@ -1,8 +1,11 @@
 package simplefix.examples;
 
+import java.util.List;
+
 import simplefix.Application;
 import simplefix.Engine;
 import simplefix.EngineFactory;
+import simplefix.Group;
 import simplefix.Message;
 import simplefix.MsgType;
 import simplefix.Session;
@@ -81,8 +84,35 @@ public class Executor {
 
                 sessionId.sendAppMessage(replyMsg);
 
-            }
+            } else if (MsgType.ORDER_LIST.equals(message.getMsgType())) {
 
+                List<Group> orderList = message.getGroupValue(Tag.NoOrders);
+
+                for (Group order : orderList) {
+                    Message replyMsg = _engineFact.createMessage(MsgType.EXECUTION_REPORT);
+
+                    replyMsg.setValue(Tag.OrderID, genOrderID());
+                    replyMsg.setValue(Tag.ExecID, genExecID());
+
+                    replyMsg.setValue(Tag.ExecTransType, "0");
+                    replyMsg.setValue(Tag.ExecType, "2");
+                    replyMsg.setValue(Tag.OrdStatus, "2");
+
+                    replyMsg.setValue(Tag.ClOrdID, order.getValue(Tag.ClOrdID));
+                    replyMsg.setValue(Tag.Symbol, order.getValue(Tag.Symbol));
+                    replyMsg.setValue(Tag.Side, order.getValue(Tag.Side));
+                    replyMsg.setValue(Tag.OrderQty, order.getValue(Tag.OrderQty));
+                    replyMsg.setValue(Tag.Price, order.getValue(Tag.Price));
+
+                    replyMsg.setValue(Tag.LeavesQty, "0");
+                    replyMsg.setValue(Tag.CumQty, order.getValue(Tag.OrderQty));
+                    replyMsg.setValue(Tag.AvgPx, order.getValue(Tag.Price));
+                    replyMsg.setValue(Tag.LastPx, order.getValue(Tag.Price));
+                    replyMsg.setValue(Tag.LastQty, order.getValue(Tag.OrderQty));
+
+                    sessionId.sendAppMessage(replyMsg);
+                }
+            }
         }
 
         public int genOrderID() {
