@@ -8,4 +8,5 @@ public interface EngineFactory {
 
     Message parseMessage(String msg);
 
+    Group createGroup(int field, int delim);
 }

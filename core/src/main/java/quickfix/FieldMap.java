@@ -56,7 +56,7 @@ public abstract class FieldMap implements Serializable {
 
     private final TreeMap<Integer, List<Group>> groups = new TreeMap<Integer, List<Group>>();
 
-    protected FieldMap(int[] fieldOrder) {
+    protected FieldMap(final int[] fieldOrder) {
         this.fieldOrder = fieldOrder;
         fields = new TreeMap<Integer, Field<?>>(fieldOrder != null
                 ? new FieldOrderComparator()
@@ -83,7 +83,7 @@ public abstract class FieldMap implements Serializable {
     private class FieldOrderComparator implements Comparator<Integer>, Serializable {
         static final long serialVersionUID = 3416006398018829270L;
 
-        public int compare(Integer tag1, Integer tag2) {
+        public int compare(final Integer tag1, final Integer tag2) {
             final int index1 = indexOf(tag1.intValue(), getFieldOrder());
             final int index2 = indexOf(tag2.intValue(), getFieldOrder());
 
@@ -107,7 +107,7 @@ public abstract class FieldMap implements Serializable {
             }
         }
 
-        private int indexOf(int tag, int[] order) {
+        private int indexOf(final int tag, final int[] order) {
             if (order != null) {
                 for (int i = 0; i < order.length; i++) {
                     if (tag == order[i]) {
@@ -119,98 +119,99 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public void setFields(FieldMap fieldMap) {
+    public void setFields(final FieldMap fieldMap) {
         fields.clear();
         fields.putAll(fieldMap.fields);
     }
 
-    protected void setComponent(MessageComponent component) {
+    protected void setComponent(final MessageComponent component) {
         component.copyTo(this);
     }
 
-    protected void getComponent(MessageComponent component) {
+    protected void getComponent(final MessageComponent component) {
         component.clear();
         component.copyFrom(this);
     }
 
-    public void setGroups(FieldMap fieldMap) {
+    public void setGroups(final FieldMap fieldMap) {
         groups.clear();
         groups.putAll(fieldMap.groups);
     }
 
-    protected void setGroups(int key, List<Group> groupList) {
+    public void setGroups(final int key, final List<Group> groupList) {
         groups.put(key, groupList);
     }
 
-    public void setString(int field, String value) {
+    public void setString(final int field, final String value) {
         setField(new StringField(field, value));
     }
 
-    public void setBytes(int field, byte[] value) {
+    public void setBytes(final int field, final byte[] value) {
         setField(field, new BytesField(field, value));
     }
 
-    public void setBoolean(int field, boolean value) {
+    public void setBoolean(final int field, final boolean value) {
         final String s = BooleanConverter.convert(value);
         setField(new StringField(field, s));
     }
 
-    public void setChar(int field, char value) {
+    public void setChar(final int field, final char value) {
         final String s = CharConverter.convert(value);
         setField(new StringField(field, s));
     }
 
-    public void setInt(int field, int value) {
+    public void setInt(final int field, final int value) {
         final String s = IntConverter.convert(value);
         setField(new StringField(field, s));
     }
 
-    public void setDouble(int field, double value) {
+    public void setDouble(final int field, final double value) {
         setDouble(field, value, 0);
     }
 
-    public void setDouble(int field, double value, int padding) {
+    public void setDouble(final int field, final double value, final int padding) {
         final String s = DoubleConverter.convert(value, padding);
         setField(new StringField(field, s));
     }
 
-    public void setDecimal(int field, BigDecimal value) {
+    public void setDecimal(final int field, final BigDecimal value) {
         setField(new StringField(field, DecimalConverter.convert(value)));
     }
 
-    public void setDecimal(int field, BigDecimal value, int padding) {
+    public void setDecimal(final int field, final BigDecimal value, final int padding) {
         final String s = DecimalConverter.convert(value, padding);
         setField(new StringField(field, s));
     }
 
-    public void setUtcTimeStamp(int field, Date value) {
+    public void setUtcTimeStamp(final int field, final Date value) {
         setUtcTimeStamp(field, value, false);
     }
 
-    public void setUtcTimeStamp(int field, Date value, boolean includeMilliseconds) {
+    public void
+            setUtcTimeStamp(final int field, final Date value, final boolean includeMilliseconds) {
         final String s = UtcTimestampConverter.convert(value, includeMilliseconds);
         setField(new StringField(field, s));
     }
 
-    public void setUtcTimeOnly(int field, Date value) {
+    public void setUtcTimeOnly(final int field, final Date value) {
         setUtcTimeOnly(field, value, false);
     }
 
-    public void setUtcTimeOnly(int field, Date value, boolean includeMillseconds) {
+    public void setUtcTimeOnly(final int field, final Date value, final boolean includeMillseconds) {
         final String s = UtcTimeOnlyConverter.convert(value, includeMillseconds);
         setField(new StringField(field, s));
     }
 
-    public void setUtcDateOnly(int field, Date value) {
+    public void setUtcDateOnly(final int field, final Date value) {
         final String s = UtcDateOnlyConverter.convert(value);
         setField(new StringField(field, s));
     }
 
-    public String getString(int field) throws FieldNotFound {
+    public String getString(final int field) throws FieldNotFound {
         return getField(field).getObject();
     }
 
-    StringField getField(int field) throws FieldNotFound {
+    StringField getField(final int field) throws FieldNotFound {
         final StringField f = (StringField) fields.get(field);
         if (f == null) {
             throw new FieldNotFound(field);
@@ -218,7 +219,7 @@ public abstract class FieldMap implements Serializable {
         return f;
     }
 
-    Field<?> getField(int field, Field<?> defaultValue) {
+    Field<?> getField(final int field, final Field<?> defaultValue) {
         final Field<?> f = fields.get(field);
         if (f == null) {
             return defaultValue;
@@ -226,7 +227,7 @@ public abstract class FieldMap implements Serializable {
         return f;
     }
 
-    public boolean getBoolean(int field) throws FieldNotFound {
+    public boolean getBoolean(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return BooleanConverter.convert(value);
@@ -235,7 +236,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public char getChar(int field) throws FieldNotFound {
+    public char getChar(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return CharConverter.convert(value);
@@ -244,7 +245,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public int getInt(int field) throws FieldNotFound {
+    public int getInt(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return IntConverter.convert(value);
@@ -253,7 +254,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public double getDouble(int field) throws FieldNotFound {
+    public double getDouble(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return DoubleConverter.convert(value);
@@ -262,7 +263,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public BigDecimal getDecimal(int field) throws FieldNotFound {
+    public BigDecimal getDecimal(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return DecimalConverter.convert(value);
@@ -271,7 +272,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public Date getUtcTimeStamp(int field) throws FieldNotFound {
+    public Date getUtcTimeStamp(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return UtcTimestampConverter.convert(value);
@@ -280,7 +281,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public Date getUtcTimeOnly(int field) throws FieldNotFound {
+    public Date getUtcTimeOnly(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return UtcTimeOnlyConverter.convert(value);
@@ -289,7 +290,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public Date getUtcDateOnly(int field) throws FieldNotFound {
+    public Date getUtcDateOnly(final int field) throws FieldNotFound {
         final String value = getField(field).getValue();
         try {
             return UtcDateOnlyConverter.convert(value);
@@ -298,63 +299,63 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public void setField(int key, Field<?> field) {
+    public void setField(final int key, final Field<?> field) {
         fields.put(key, field);
     }
 
-    public void setField(StringField field) {
+    public void setField(final StringField field) {
         if (field.getValue() == null) {
             throw new NullPointerException("Null field values are not allowed.");
         }
         fields.put(field.getField(), field);
     }
 
-    public void setField(BooleanField field) {
+    public void setField(final BooleanField field) {
         setBoolean(field.getField(), field.getValue());
     }
 
-    public void setField(CharField field) {
+    public void setField(final CharField field) {
         setChar(field.getField(), field.getValue());
     }
 
-    public void setField(IntField field) {
+    public void setField(final IntField field) {
         setInt(field.getField(), field.getValue());
     }
 
-    public void setField(DoubleField field) {
+    public void setField(final DoubleField field) {
         setDouble(field.getField(), field.getValue());
     }
 
-    public void setField(DecimalField field) {
+    public void setField(final DecimalField field) {
         setDecimal(field.getField(), field.getValue());
     }
 
-    public void setField(UtcTimeStampField field) {
+    public void setField(final UtcTimeStampField field) {
         setUtcTimeStamp(field.getField(), field.getValue(), field.showMilliseconds());
     }
 
-    public void setField(UtcTimeOnlyField field) {
+    public void setField(final UtcTimeOnlyField field) {
         setUtcTimeOnly(field.getField(), field.getValue(), field.showMilliseconds());
     }
 
-    public void setField(UtcDateOnlyField field) {
+    public void setField(final UtcDateOnlyField field) {
         setUtcDateOnly(field.getField(), field.getValue());
     }
 
-    public void setField(BytesField field) {
+    public void setField(final BytesField field) {
         setBytes(field.getField(), field.getObject());
     }
 
-    public StringField getField(StringField field) throws FieldNotFound {
+    public StringField getField(final StringField field) throws FieldNotFound {
         return (StringField) getFieldInternal(field);
     }
 
-    private Field<String> getFieldInternal(Field<String> field) throws FieldNotFound {
+    private Field<String> getFieldInternal(final Field<String> field) throws FieldNotFound {
         field.setObject(getField(field.getField()).getObject());
         return field;
     }
 
-    public BytesField getField(BytesField field) throws FieldNotFound {
+    public BytesField getField(final BytesField field) throws FieldNotFound {
         final Field<?> returnField = fields.get(field.getField());
         if (returnField == null) {
             throw new FieldNotFound(field.getField());
@@ -366,7 +367,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public BooleanField getField(BooleanField field) throws FieldNotFound {
+    public BooleanField getField(final BooleanField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(Boolean.valueOf(BooleanConverter.convert(value)));
@@ -378,7 +379,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public CharField getField(CharField field) throws FieldNotFound {
+    public CharField getField(final CharField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(Character.valueOf(CharConverter.convert(value)));
@@ -390,7 +391,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public IntField getField(IntField field) throws FieldNotFound {
+    public IntField getField(final IntField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(IntConverter.convert(value));
@@ -402,7 +403,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public DoubleField getField(DoubleField field) throws FieldNotFound {
+    public DoubleField getField(final DoubleField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(new Double(DoubleConverter.convert(value)));
@@ -414,7 +415,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public DecimalField getField(DecimalField field) throws FieldNotFound {
+    public DecimalField getField(final DecimalField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(DecimalConverter.convert(value));
@@ -426,7 +427,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public UtcTimeStampField getField(UtcTimeStampField field) throws FieldNotFound {
+    public UtcTimeStampField getField(final UtcTimeStampField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(UtcTimestampConverter.convert(value));
@@ -438,7 +439,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public UtcTimeOnlyField getField(UtcTimeOnlyField field) throws FieldNotFound {
+    public UtcTimeOnlyField getField(final UtcTimeOnlyField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(UtcTimeOnlyConverter.convert(value));
@@ -450,7 +451,7 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    public UtcDateOnlyField getField(UtcDateOnlyField field) throws FieldNotFound {
+    public UtcDateOnlyField getField(final UtcDateOnlyField field) throws FieldNotFound {
         try {
             final String value = getField(field.getField()).getValue();
             field.setObject(UtcDateOnlyConverter.convert(value));
@@ -462,20 +463,20 @@ public abstract class FieldMap implements Serializable {
         return field;
     }
 
-    private FieldException newIncorrectDataException(FieldConvertError e, int tag) {
+    private FieldException newIncorrectDataException(final FieldConvertError e, final int tag) {
         return new FieldException(SessionRejectReason.INCORRECT_DATA_FORMAT_FOR_VALUE,
                 e.getMessage(), tag);
     }
 
-    public boolean isSetField(int field) {
+    public boolean isSetField(final int field) {
         return fields.containsKey(field);
     }
 
-    public boolean isSetField(Field<?> field) {
+    public boolean isSetField(final Field<?> field) {
         return isSetField(field.getField());
     }
 
-    public void removeField(int field) {
+    public void removeField(final int field) {
         fields.remove(field);
     }
 
@@ -483,7 +484,7 @@ public abstract class FieldMap implements Serializable {
         return fields.values().iterator();
     }
 
-    protected void initializeFrom(FieldMap source) {
+    protected void initializeFrom(final FieldMap source) {
         fields.clear();
         fields.putAll(source.fields);
         final Iterator<Map.Entry<Integer, List<Group>>> groupItr = source.groups.entrySet()
@@ -503,11 +504,12 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    private boolean isGroupField(int field) {
+    private boolean isGroupField(final int field) {
         return groups.containsKey(field);
     }
 
-    protected void calculateString(StringBuffer buffer, int[] preFields, int[] postFields) {
+    protected void calculateString(final StringBuffer buffer, final int[] preFields,
+            final int[] postFields) {
         if (preFields != null) {
             for (final int preField : preFields) {
                 final Field<?> field = getField(preField, null);
@@ -563,7 +565,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    private boolean isOrderedField(int field, int[] afieldOrder) {
+    private boolean isOrderedField(final int field, final int[] afieldOrder) {
         if (afieldOrder != null) {
             for (final int element : afieldOrder) {
                 if (field == element) {
@@ -640,7 +642,7 @@ public abstract class FieldMap implements Serializable {
      * @param tag the count tag number
      * @return the number of times the group repeats
      */
-    public int getGroupCount(int tag) {
+    public int getGroupCount(final int tag) {
         return getGroups(tag).size();
     }
 
@@ -652,21 +654,21 @@ public abstract class FieldMap implements Serializable {
         return groups;
     }
 
-    public void addGroup(Group group) {
+    public void addGroup(final Group group) {
         final int countTag = group.getFieldTag();
         final List<Group> currentGroups = getGroups(countTag);
         currentGroups.add(new Group(group));
         setGroupCount(countTag, currentGroups.size());
     }
 
-    public void addGroupRef(Group group) {
+    public void addGroupRef(final Group group) {
         int countTag = group.getFieldTag();
         List<Group> currentGroups = getGroups(countTag);
         currentGroups.add(group);
         setGroupCount(countTag, currentGroups.size());
     }
 
-    protected void setGroupCount(int countTag, int groupSize) {
+    protected void setGroupCount(final int countTag, final int groupSize) {
         try {
             StringField count;
             if (groupSize == 1) {
@@ -682,7 +684,7 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public List<Group> getGroups(int field) {
+    public List<Group> getGroups(final int field) {
         List<Group> groupList = groups.get(field);
         if (groupList == null) {
             groupList = new ArrayList<Group>();
@@ -691,7 +693,7 @@ public abstract class FieldMap implements Serializable {
         return groupList;
     }
 
-    public Group getGroup(int num, Group group) throws FieldNotFound {
+    public Group getGroup(final int num, final Group group) throws FieldNotFound {
         final List<Group> groupList = getGroups(group.getFieldTag());
         if (num > groupList.size()) {
             throw new FieldNotFound(group.getFieldTag() + ", index=" + num);
@@ -702,16 +704,16 @@ public abstract class FieldMap implements Serializable {
         return group;
     }
 
-    public Group getGroup(int num, int groupTag) throws FieldNotFound {
+    public Group getGroup(final int num, final int groupTag) throws FieldNotFound {
         List<Group> groupList = getGroups(groupTag);
         if (num > groupList.size()) {
             throw new FieldNotFound(groupTag + ", index=" + num);
         }
-        final Group grp = (Group) groupList.get(num - 1);
+        final Group grp = groupList.get(num - 1);
         return grp;
     }
 
-    public void replaceGroup(int num, Group group) {
+    public void replaceGroup(final int num, final Group group) {
         final int offset = num - 1;
         final List<Group> groupList = getGroups(group.getFieldTag());
         if (offset < 0 || offset >= groupList.size()) {
@@ -720,12 +722,12 @@ public abstract class FieldMap implements Serializable {
         groupList.set(offset, new Group(group));
     }
 
-    public void removeGroup(int field) {
+    public void removeGroup(final int field) {
         getGroups(field).clear();
         removeField(field);
     }
 
-    public void removeGroup(int num, int field) {
+    public void removeGroup(final int num, final int field) {
         final List<Group> groupList = getGroups(field);
         if (num <= groupList.size()) {
             groupList.remove(num - 1);
@@ -735,27 +737,27 @@ public abstract class FieldMap implements Serializable {
         }
     }
 
-    public void removeGroup(int num, Group group) {
+    public void removeGroup(final int num, final Group group) {
         removeGroup(num, group.getFieldTag());
     }
 
-    public void removeGroup(Group group) {
+    public void removeGroup(final Group group) {
         removeGroup(group.getFieldTag());
     }
 
-    public boolean hasGroup(int field) {
+    public boolean hasGroup(final int field) {
         return groups.containsKey(field);
     }
 
-    public boolean hasGroup(int num, int field) {
+    public boolean hasGroup(final int num, final int field) {
         return hasGroup(field) && num <= getGroups(field).size();
     }
 
-    public boolean hasGroup(int num, Group group) {
+    public boolean hasGroup(final int num, final Group group) {
         return hasGroup(num, group.getFieldTag());
     }
 
-    public boolean hasGroup(Group group) {
+    public boolean hasGroup(final Group group) {
         return hasGroup(group.getFieldTag());
     }
 

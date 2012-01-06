@@ -1,11 +1,7 @@
 package simplefix;
 
-public interface Message {
-    
+public interface Message extends Group {
+
     MsgType getMsgType();
-    
-    Object getValue(Tag tag);
-    
-    void setValue(Tag tag, Object value);
-    
+
 }
