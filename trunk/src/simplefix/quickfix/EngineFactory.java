@@ -22,4 +22,8 @@ public class EngineFactory implements simplefix.EngineFactory {
         return new Message(msg);
     }
 
+    public simplefix.Group createGroup(final int field, final int delim) {
+        return new Group(new quickfix.Group(field, delim));
+    }
+
 }

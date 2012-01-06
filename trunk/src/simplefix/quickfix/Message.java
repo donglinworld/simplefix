@@ -1,5 +1,8 @@
 package simplefix.quickfix;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import quickfix.FieldNotFound;
 import quickfix.InvalidMessage;
 import simplefix.MsgType;
@@ -66,7 +69,6 @@ public class Message implements simplefix.Message {
         } catch (FieldNotFound e) {
             e.printStackTrace();
         }
-        ;
         return null;
     }
 
@@ -79,6 +81,25 @@ public class Message implements simplefix.Message {
             return;
         }
         _msg.setString(tag.getTagNum(), value.toString());
+    }
+
+    public List<simplefix.Group> getGroupValue(final Tag tag) {
+        List<quickfix.Group> quickGroups = _msg.getGroups(tag.getTagNum());
+        List<simplefix.Group> simpleGroups = new LinkedList<simplefix.Group>();
+        for (quickfix.Group quickGroup : quickGroups) {
+            simpleGroups.add(new Group(quickGroup));
+        }
+        return simpleGroups;
+    }
+
+    public void setGroupValue(final Tag tag, final List<simplefix.Group> value) {
+        List<quickfix.Group> quickGroups = new LinkedList<quickfix.Group>();
+        for (simplefix.Group simpleGroup : value) {
+            if (simpleGroup instanceof Group) {
+                quickGroups.add(((Group) simpleGroup)._group);
+            }
+        }
+        _msg.setGroups(tag.getTagNum(), quickGroups);
     }
 
 }
