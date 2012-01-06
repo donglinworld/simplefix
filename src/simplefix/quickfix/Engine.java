@@ -36,6 +36,7 @@ import quickfix.ScreenLogFactory;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 import quickfix.SocketAcceptor;
+import quickfix.SocketInitiator;
 import quickfix.UnsupportedMessageType;
 import quickfix.mina.acceptor.DynamicAcceptorSessionProvider;
 import quickfix.mina.acceptor.DynamicAcceptorSessionProvider.TemplateMapping;
@@ -44,10 +45,12 @@ public class Engine implements simplefix.Engine {
 
     private final static Logger log = LoggerFactory.getLogger(Engine.class);
     private SocketAcceptor acceptor;
+    private SocketInitiator initiator;
     private final Map<InetSocketAddress, List<TemplateMapping>> dynamicSessionMappings = new HashMap<InetSocketAddress, List<TemplateMapping>>();
 
     private JmxExporter jmxExporter;
-    private ObjectName connectorObjectName;
+    private ObjectName acceptorObjectName;
+    private ObjectName initiatorObjectName;
 
     private SessionSettings _settings;
 
@@ -74,15 +77,21 @@ public class Engine implements simplefix.Engine {
 
             acceptor = new SocketAcceptor(application, messageStoreFactory, _settings, logFactory,
                     messageFactory);
-
             configureDynamicSessions(_settings, application, messageStoreFactory, logFactory,
                     messageFactory);
 
+            initiator = new SocketInitiator(application, messageStoreFactory, _settings,
+                    logFactory,
+                    messageFactory);
+
             jmxExporter = new JmxExporter();
-            connectorObjectName = jmxExporter.register(acceptor);
-            log.info("Acceptor registered with JMX, name=" + connectorObjectName);
+            acceptorObjectName = jmxExporter.register(acceptor);
+            log.info("Acceptor registered with JMX, name=" + acceptorObjectName);
+            initiatorObjectName = jmxExporter.register(initiator);
+            log.info("Acceptor registered with JMX, name=" + initiatorObjectName);
 
             acceptor.start();
+            initiator.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,11 +106,13 @@ public class Engine implements simplefix.Engine {
     public void stop() {
 
         try {
-            jmxExporter.getMBeanServer().unregisterMBean(connectorObjectName);
+            jmxExporter.getMBeanServer().unregisterMBean(acceptorObjectName);
+            jmxExporter.getMBeanServer().unregisterMBean(initiatorObjectName);
         } catch (Exception e) {
             log.error("Failed to unregister acceptor from JMX", e);
         }
         acceptor.stop();
+        initiator.stop();
 
     }
 
