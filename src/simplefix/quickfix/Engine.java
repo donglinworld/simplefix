@@ -60,7 +60,6 @@ public class Engine implements simplefix.Engine {
             inputStream.close();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -86,7 +85,6 @@ public class Engine implements simplefix.Engine {
             acceptor.start();
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

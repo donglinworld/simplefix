@@ -46,16 +46,13 @@ public class Executor {
     private static class _Application implements Application {
 
         public _Application() {
-            // TODO Auto-generated constructor stub
         }
 
         public void onLogon(final Session sessionId) {
-            // TODO Auto-generated method stub
 
         }
 
         public void onLogout(final Session sessionId) {
-            // TODO Auto-generated method stub
 
         }
 
