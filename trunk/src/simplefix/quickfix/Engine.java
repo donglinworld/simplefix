@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.JMException;
 import javax.management.ObjectName;
 
 import org.quickfixj.jmx.JmxExporter;
@@ -69,28 +70,42 @@ public class Engine implements simplefix.Engine {
 
     public void startInProcess(final simplefix.Application app) {
 
+        _Application application = new _Application(app);
+        MessageStoreFactory messageStoreFactory = new FileStoreFactory(_settings);
+        LogFactory logFactory = new ScreenLogFactory(true, true, true);
+        MessageFactory messageFactory = new DefaultMessageFactory();
+
         try {
-            _Application application = new _Application(app);
-            MessageStoreFactory messageStoreFactory = new FileStoreFactory(_settings);
-            LogFactory logFactory = new ScreenLogFactory(true, true, true);
-            MessageFactory messageFactory = new DefaultMessageFactory();
+            jmxExporter = new JmxExporter();
+        } catch (JMException e1) {
+            e1.printStackTrace();
+        }
+
+        try {
 
             acceptor = new SocketAcceptor(application, messageStoreFactory, _settings, logFactory,
                     messageFactory);
             configureDynamicSessions(_settings, application, messageStoreFactory, logFactory,
                     messageFactory);
 
+            acceptorObjectName = jmxExporter.register(acceptor);
+            log.info("Acceptor registered with JMX, name=" + acceptorObjectName);
+
+            acceptor.start();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+
             initiator = new SocketInitiator(application, messageStoreFactory, _settings,
                     logFactory,
                     messageFactory);
 
-            jmxExporter = new JmxExporter();
-            acceptorObjectName = jmxExporter.register(acceptor);
-            log.info("Acceptor registered with JMX, name=" + acceptorObjectName);
             initiatorObjectName = jmxExporter.register(initiator);
-            log.info("Acceptor registered with JMX, name=" + initiatorObjectName);
+            log.info("Initiator registered with JMX, name=" + initiatorObjectName);
 
-            acceptor.start();
             initiator.start();
 
         } catch (Exception e) {
