@@ -2,7 +2,7 @@ package simplefix;
 
 public interface EngineFactory {
 
-    Engine getEngine();
+    Engine createEngine();
 
     Message createMessage(MsgType type);
 
