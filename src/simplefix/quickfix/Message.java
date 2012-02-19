@@ -58,16 +58,24 @@ public class Message implements simplefix.Message {
             if (str != null) {
                 return str;
             }
+        } catch (FieldNotFound e) {
+            //e.printStackTrace();
+        }
+        try {
             str = _msg.getHeader().getString(tag.getTagNum());
             if (str != null) {
                 return str;
             }
+        } catch (FieldNotFound e) {
+            //e.printStackTrace();
+        }
+        try {
             str = _msg.getTrailer().getString(tag.getTagNum());
             if (str != null) {
                 return str;
             }
         } catch (FieldNotFound e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return null;
     }
