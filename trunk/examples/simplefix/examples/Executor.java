@@ -26,7 +26,7 @@ public class Executor {
             if (engineobj instanceof EngineFactory) {
 
                 _engineFact = (EngineFactory) engineobj;
-                Engine engine = _engineFact.getEngine();
+                Engine engine = _engineFact.createEngine();
                 engine.initEngine(initParas);
 
                 Application application = new _Application();

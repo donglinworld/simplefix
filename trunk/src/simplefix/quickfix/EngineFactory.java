@@ -4,14 +4,8 @@ import simplefix.MsgType;
 
 public class EngineFactory implements simplefix.EngineFactory {
 
-    private static simplefix.Engine _engine;
-
-    public simplefix.Engine getEngine() {
-        if (_engine == null) {
-            _engine = new Engine();
-        }
-        return _engine;
-
+    public simplefix.Engine createEngine() {
+        return new Engine();
     }
 
     public simplefix.Message createMessage(final MsgType type) {
