@@ -665,6 +665,16 @@ public class Session implements Closeable {
         return sessions.get(sessionID);
     }
 
+    public static Session lookupSession(final String senderCompID, final String targetCompID) {
+        for (SessionID sessionID : sessions.keySet()) {
+            if (sessionID.getSenderCompID().equals(senderCompID)
+                    && sessionID.getTargetCompID().equals(targetCompID)) {
+                return sessions.get(sessionID);
+            }
+        }
+        return null;
+    }
+
     /**
      * This method can be used to manually logon to a FIX session.
      */
@@ -1582,9 +1592,10 @@ public class Session implements Closeable {
         nextQueued();
     }
 
-    private boolean verify(final Message msg, final boolean checkTooHigh, final boolean checkTooLow)
-            throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
-            UnsupportedMessageType, IOException {
+    private boolean
+            verify(final Message msg, final boolean checkTooHigh, final boolean checkTooLow)
+                    throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
+                    UnsupportedMessageType, IOException {
 
         state.setLastReceivedTime(SystemTime.currentTimeMillis());
         state.clearTestRequestCounter();
