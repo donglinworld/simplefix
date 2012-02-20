@@ -214,12 +214,14 @@ public class Engine implements simplefix.Engine {
         }
 
         public void onLogon(final SessionID sessionId) {
-            _app.onLogon(new Session(sessionId));
+            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+            _app.onLogon(new Session(session));
 
         }
 
         public void onLogout(final SessionID sessionId) {
-            _app.onLogout(new Session(sessionId));
+            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+            _app.onLogout(new Session(session));
 
         }
 
@@ -243,10 +245,18 @@ public class Engine implements simplefix.Engine {
         public void fromApp(final quickfix.Message message, final SessionID sessionId)
                 throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
                 UnsupportedMessageType {
-            _app.onAppMessage(new Message(message), new Session(sessionId));
+            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+            _app.onAppMessage(new Message(message), new Session(session));
 
         }
 
     }
 
+    public simplefix.Session lookupSession(final String senderCompID, final String targetCompID) {
+        quickfix.Session session = quickfix.Session.lookupSession(senderCompID, targetCompID);
+        if (session != null) {
+            return new Session(session);
+        }
+        return null;
+    }
 }

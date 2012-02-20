@@ -1,31 +1,26 @@
 package simplefix.quickfix;
 
-import quickfix.SessionID;
-import quickfix.SessionNotFound;
 import simplefix.FixVersion;
 
 public class Session implements simplefix.Session {
 
-    SessionID _session;
+    quickfix.Session _session;
 
-    public Session(final SessionID session) {
+    public Session(final quickfix.Session session) {
         super();
         _session = session;
     }
 
     public FixVersion getFixVersion() {
-        // TODO Auto-generated method stub
-        return null;
+        return FixVersion.fromBeginString(_session.getSessionID().getBeginString());
     }
 
     public String getSenderCompID() {
-        // TODO Auto-generated method stub
-        return null;
+        return _session.getSessionID().getSenderCompID();
     }
 
     public String getTargetCompID() {
-        // TODO Auto-generated method stub
-        return null;
+        return _session.getSessionID().getTargetCompID();
     }
 
     public void sendAppMessage(final simplefix.Message msg) {
@@ -36,15 +31,6 @@ public class Session implements simplefix.Session {
         } else {
             return;
         }
-        try {
-            quickfix.Session session = quickfix.Session.lookupSession(_session);
-            if (session == null) {
-                throw new SessionNotFound(_session.toString());
-            }
-            session.send(message);
-        } catch (SessionNotFound e) {
-            e.printStackTrace();
-        }
-
+        _session.send(message);
     }
 }
