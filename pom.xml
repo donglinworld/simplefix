@@ -69,7 +69,7 @@
 	<repositories>
 		<repository>
 			<id>fusesourceRepo</id>
-			<url>http://repo.fusesource.com/maven2-all</url>
+			<url>http://repo.fusesource.com/nexus/content/groups/public/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
