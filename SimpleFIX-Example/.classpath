@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="lib/simple-quickfix-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/sleepycat-je_2.1.30.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-jdk14-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
