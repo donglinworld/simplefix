@@ -33,4 +33,8 @@ public class Session implements simplefix.Session {
         }
         _session.send(message);
     }
+
+    public quickfix.Session getQuickFixSession() {
+        return _session;
+    }
 }
