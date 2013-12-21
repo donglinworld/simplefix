@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -295,8 +296,8 @@ public class Session implements Closeable {
     public static final String SETTING_DEFAULT_APPL_VER_ID = "DefaultApplVerID";
 
     /**
-    * Allow to disable heart beat failure detection
-    */
+     * Allow to disable heart beat failure detection
+     */
     public static final String SETTING_DISABLE_HEART_BEAT_CHECK = "DisableHeartBeatCheck";
 
     /**
@@ -675,6 +676,15 @@ public class Session implements Closeable {
         return null;
     }
 
+    public static List<Session> getAllsessions() {
+        List<Session> list = new LinkedList<Session>();
+        for (Session session : sessions.values()) {
+            list.add(session);
+        }
+
+        return list;
+    }
+
     /**
      * This method can be used to manually logon to a FIX session.
      */
@@ -710,7 +720,8 @@ public class Session implements Closeable {
         final boolean includeMillis = sessionID.getBeginString().compareTo(
                 FixVersions.BEGINSTRING_FIX42) >= 0
                 && millisecondsInTimeStamp;
-        header.setUtcTimeStamp(SendingTime.FIELD, SystemTime.getDate(), includeMillis);
+
+                header.setUtcTimeStamp(SendingTime.FIELD, SystemTime.getDate(), includeMillis);
     }
 
     /**
@@ -881,7 +892,7 @@ public class Session implements Closeable {
      * (Internal use only)
      */
     public void next(final Message message) throws FieldNotFound, RejectLogon, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
+    IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
 
         final Header header = message.getHeader();
         final String msgType = header.getString(MsgType.FIELD);
@@ -925,10 +936,10 @@ public class Session implements Closeable {
                 final ApplVerID applVerID = header.isSetField(ApplVerID.FIELD) ? new ApplVerID(
                         header.getString(ApplVerID.FIELD)) : targetDefaultApplVerID.get();
 
-                final DataDictionary applicationDataDictionary = MessageUtils
-                        .isAdminMessage(msgType) ? dataDictionaryProvider
-                        .getSessionDataDictionary(beginString) : dataDictionaryProvider
-                        .getApplicationDataDictionary(applVerID);
+                final DataDictionary applicationDataDictionary = MessageUtils//
+                .isAdminMessage(msgType) ? dataDictionaryProvider//
+                .getSessionDataDictionary(beginString) : dataDictionaryProvider//
+                .getApplicationDataDictionary(applVerID);//
 
                 // related to QFJ-367 : just warn invalid incoming field/tags
                 try {
@@ -956,7 +967,7 @@ public class Session implements Closeable {
                             getLog().onErrorEvent(
                                     "Warn: incoming message with missing field: " + e.getField()
                                             + ": " + e.getMessage() + ": " + message);
-                        }
+                                                }
                     }
                 } catch (final FieldNotFound e) {
                     if (rejectInvalidMessage) {
@@ -1107,8 +1118,8 @@ public class Session implements Closeable {
     }
 
     private void nextReject(final Message reject) throws FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
-            InvalidMessage {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+    InvalidMessage {
         if (!verify(reject, false, validateSequenceNumbers)) {
             return;
         }
@@ -1117,8 +1128,8 @@ public class Session implements Closeable {
     }
 
     private void nextResendRequest(final Message resendRequest) throws IOException, RejectLogon,
-            FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType,
-            InvalidMessage {
+    FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType,
+    InvalidMessage {
         if (!verify(resendRequest, false, false)) {
             return;
         }
@@ -1305,7 +1316,7 @@ public class Session implements Closeable {
     }
 
     private void nextLogout(final Message logout) throws IOException, RejectLogon, FieldNotFound,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         if (!verify(logout, false, false)) {
             return;
         }
@@ -1368,7 +1379,7 @@ public class Session implements Closeable {
     }
 
     private void nextSequenceReset(final Message sequenceReset) throws IOException, RejectLogon,
-            FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
+    FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
         boolean isGapFill = false;
         if (sequenceReset.isSetField(GapFillFlag.FIELD)) {
             isGapFill = sequenceReset.getBoolean(GapFillFlag.FIELD) && validateSequenceNumbers;
@@ -1413,7 +1424,7 @@ public class Session implements Closeable {
     }
 
     private void generateReject(final Message message, final String str) throws FieldNotFound,
-            IOException {
+    IOException {
         final String beginString = sessionID.getBeginString();
         final Message reject = messageFactory.create(beginString, MsgType.REJECT);
         final Header header = message.getHeader();
@@ -1551,14 +1562,14 @@ public class Session implements Closeable {
         setRejectReason(reject, field, reason, field != 0);
         getLog().onErrorEvent(
                 "Reject sent for Message " + msgSeqNum + (reason != null ? (": " + reason) : "")
-                        + (field != 0 ? (": tag=" + field) : ""));
+                + (field != 0 ? (": tag=" + field) : ""));
 
         sendRaw(reject, 0);
     }
 
     private void nextTestRequest(final Message testRequest) throws FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
-            InvalidMessage {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+    InvalidMessage {
         if (!verify(testRequest)) {
             return;
         }
@@ -1583,8 +1594,8 @@ public class Session implements Closeable {
     }
 
     private void nextHeartBeat(final Message heartBeat) throws FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
-            InvalidMessage {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+    InvalidMessage {
         if (!verify(heartBeat)) {
             return;
         }
@@ -1593,9 +1604,9 @@ public class Session implements Closeable {
     }
 
     private boolean
-            verify(final Message msg, final boolean checkTooHigh, final boolean checkTooLow)
-                    throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
-                    UnsupportedMessageType, IOException {
+    verify(final Message msg, final boolean checkTooHigh, final boolean checkTooLow)
+            throws RejectLogon, FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
+            UnsupportedMessageType, IOException {
 
         state.setLastReceivedTime(SystemTime.currentTimeMillis());
         state.clearTestRequestCounter();
@@ -1765,7 +1776,7 @@ public class Session implements Closeable {
     }
 
     private boolean verify(final Message message) throws RejectLogon, FieldNotFound,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
         return verify(message, validateSequenceNumbers, validateSequenceNumbers);
     }
 
@@ -1983,8 +1994,8 @@ public class Session implements Closeable {
     }
 
     private void nextLogon(final Message logon) throws FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
-            InvalidMessage {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+    InvalidMessage {
 
         // QFJ-357
         // If this check is not done here, the Logon would be accepted and
@@ -2083,15 +2094,15 @@ public class Session implements Closeable {
     }
 
     private void nextQueued() throws FieldNotFound, RejectLogon, IncorrectDataFormat,
-            IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
+    IncorrectTagValue, UnsupportedMessageType, IOException, InvalidMessage {
         while (nextQueued(getExpectedTargetNum())) {
             // continue
         }
     }
 
     private boolean nextQueued(final int num) throws FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
-            InvalidMessage {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException,
+    InvalidMessage {
         final Message msg = state.dequeue(num);
 
         if (msg != null) {
@@ -2110,7 +2121,7 @@ public class Session implements Closeable {
     }
 
     private void next(final String msg) throws InvalidMessage, FieldNotFound, RejectLogon,
-            IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
+    IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType, IOException {
         try {
             next(parseMessage(msg));
         } catch (final InvalidMessage e) {
@@ -2128,7 +2139,7 @@ public class Session implements Closeable {
     }
 
     private void doTargetTooHigh(final Message msg) throws FieldNotFound, IOException,
-            InvalidMessage {
+    InvalidMessage {
         final Message.Header header = msg.getHeader();
         final String beginString = header.getString(BeginString.FIELD);
         final int msgSeqNum = header.getInt(MsgSeqNum.FIELD);
@@ -2190,7 +2201,7 @@ public class Session implements Closeable {
         getLog().onEvent("Sent ResendRequest FROM: " + beginSeqNo + " TO: " + lastEndSeqNoSent);
         state.setResendRange(beginSeqNo, msgSeqNum - 1, resendRequestChunkSize == 0
                 ? 0
-                : lastEndSeqNoSent);
+                        : lastEndSeqNoSent);
 
     }
 
@@ -2217,7 +2228,7 @@ public class Session implements Closeable {
                 }
                 getLog().onErrorEvent(
                         "Warn: incoming message with " + new FieldNotFound(OrigSendingTime.FIELD)
-                                + ": " + msg);
+                        + ": " + msg);
             }
         }
 

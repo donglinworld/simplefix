@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -258,5 +259,15 @@ public class Engine implements simplefix.Engine {
             return new Session(session);
         }
         return null;
+    }
+
+    public List<simplefix.Session> getAllSessions() {
+        List<simplefix.Session> list = new LinkedList<simplefix.Session>();
+
+        for (quickfix.Session session : quickfix.Session.getAllsessions()) {
+            list.add(new Session(session));
+        }
+
+        return list;
     }
 }
