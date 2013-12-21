@@ -1,5 +1,7 @@
 package simplefix;
 
+import java.util.List;
+
 public interface Engine {
 
     /**
@@ -32,4 +34,9 @@ public interface Engine {
      * look up session
      */
     Session lookupSession(String senderCompID, String targetCompID);
+
+    /**
+     * get all sessions
+     */
+    List<Session> getAllSessions();
 }
