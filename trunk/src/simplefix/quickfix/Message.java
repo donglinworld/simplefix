@@ -110,4 +110,8 @@ public class Message implements simplefix.Message {
         _msg.setGroups(tag.getTagNum(), quickGroups);
     }
 
+    @Override
+    public String toString() {
+        return _msg.toString();
+    }
 }
