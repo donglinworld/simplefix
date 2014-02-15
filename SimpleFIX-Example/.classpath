@@ -9,9 +9,9 @@
 	<classpathentry kind="lib" path="lib/mina-filter-ssl-1.1.7.jar"/>
 	<classpathentry kind="lib" path="lib/proxool-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/proxool-cglib.jar"/>
-	<classpathentry kind="lib" path="lib/simple-quickfix-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/sleepycat-je_2.1.30.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.3.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/simple-quickfix-1.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
