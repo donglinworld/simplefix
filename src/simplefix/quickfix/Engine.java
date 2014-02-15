@@ -6,6 +6,7 @@ import static quickfix.Acceptor.SETTING_SOCKET_ACCEPT_PORT;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -58,14 +59,21 @@ public class Engine implements simplefix.Engine {
 
     public void initEngine(final String... initParas) {
 
-        InputStream inputStream;
+        InputStream inputStream = null;
         try {
             inputStream = getSettingsInputStream(initParas);
             _settings = new SessionSettings(inputStream);
-            inputStream.close();
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -138,11 +146,10 @@ public class Engine implements simplefix.Engine {
         if (args.length == 0) {
             inputStream = Engine.class.getResourceAsStream("executor.cfg");
         } else if (args.length == 1) {
-            inputStream = new FileInputStream(args[0]);
-        }
-        if (inputStream == null) {
-            System.out.println("usage: " + Engine.class.getName() + " [configFile].");
-            System.exit(1);
+            inputStream = Engine.class.getResourceAsStream(args[0]);
+            if (inputStream == null) {
+                inputStream = new FileInputStream(args[0]);
+            }
         }
         return inputStream;
     }
@@ -233,7 +240,12 @@ public class Engine implements simplefix.Engine {
 
         public void fromAdmin(final quickfix.Message message, final SessionID sessionId)
                 throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, RejectLogon {
-            // TODO Auto-generated method stub
+
+            //treat session reject (35=3) as Application message
+            if (message.getHeader().getString(35).equals("3")) {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.onAppMessage(new Message(message), new Session(session));
+            }
 
         }
 
