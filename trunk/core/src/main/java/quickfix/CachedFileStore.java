@@ -89,7 +89,7 @@ public class CachedFileStore implements MessageStore {
 
     private final String charsetEncoding = CharsetSupport.getCharset();
 
-    CachedFileStore(String path, SessionID sessionID, boolean syncWrites) throws IOException {
+    CachedFileStore(final String path, final SessionID sessionID, final boolean syncWrites) throws IOException {
         this.syncWrites = syncWrites;
 
         final String fullPath = new File(path == null ? "." : path).getAbsolutePath();
@@ -109,7 +109,7 @@ public class CachedFileStore implements MessageStore {
         initialize(false);
     }
 
-    void initialize(boolean deleteFiles) throws IOException {
+    void initialize(final boolean deleteFiles) throws IOException {
         closeFiles();
 
         if (deleteFiles) {
@@ -221,13 +221,13 @@ public class CachedFileStore implements MessageStore {
         closeFile(sequenceNumberFile);
     }
 
-    private void closeFile(RandomAccessFile file) throws IOException {
+    private void closeFile(final RandomAccessFile file) throws IOException {
         if (file != null) {
             file.close();
         }
     }
 
-    private void closeOutputStream(OutputStream stream) throws IOException {
+    private void closeOutputStream(final OutputStream stream) throws IOException {
         if (stream != null) {
             stream.close();
         }
@@ -241,7 +241,7 @@ public class CachedFileStore implements MessageStore {
         deleteFile(sessionFileName);
     }
 
-    private void deleteFile(String fileName) throws IOException {
+    private void deleteFile(final String fileName) throws IOException {
         final File file = new File(fileName);
         if (file.exists() && !file.delete()) {
             log.error("File delete failed: " + fileName);
@@ -268,7 +268,7 @@ public class CachedFileStore implements MessageStore {
      * (non-Javadoc)
      * @see quickfix.MessageStore#setNextSenderMsgSeqNum(int)
      */
-    public void setNextSenderMsgSeqNum(int next) throws IOException {
+    public void setNextSenderMsgSeqNum(final int next) throws IOException {
         cache.setNextSenderMsgSeqNum(next);
         storeSequenceNumbers();
     }
@@ -277,7 +277,7 @@ public class CachedFileStore implements MessageStore {
      * (non-Javadoc)
      * @see quickfix.MessageStore#setNextTargetMsgSeqNum(int)
      */
-    public void setNextTargetMsgSeqNum(int next) throws IOException {
+    public void setNextTargetMsgSeqNum(final int next) throws IOException {
         cache.setNextTargetMsgSeqNum(next);
         storeSequenceNumbers();
     }
@@ -304,7 +304,7 @@ public class CachedFileStore implements MessageStore {
      * (non-Javadoc)
      * @see quickfix.MessageStore#get(int, int, java.util.Collection)
      */
-    public void get(int startSequence, int endSequence, Collection<String> messages)
+    public void get(final int startSequence, final int endSequence, final Collection<String> messages)
             throws IOException {
         final Collection<String> readedMsg = getMessage(startSequence, endSequence);
         messages.addAll(readedMsg);
@@ -314,11 +314,11 @@ public class CachedFileStore implements MessageStore {
      * This method is here for JNI API consistency but it's not implemented. Use get(int, int, Collection) with the same
      * start and end sequence.
      */
-    public boolean get(int sequence, String message) {
+    public boolean get(final int sequence, final String message) {
         throw new UnsupportedOperationException("not supported");
     }
 
-    private String read(long offset, long size) throws IOException {
+    private String read(final long offset, final long size) throws IOException {
         String message = null;
         final byte[] data = new byte[(int) size];
 
@@ -332,7 +332,7 @@ public class CachedFileStore implements MessageStore {
         return message;
     }
 
-    private Collection<String> getMessage(long startSequence, long endSequence) throws IOException {
+    private Collection<String> getMessage(final long startSequence, final long endSequence) throws IOException {
         final Collection<String> messages = new ArrayList<String>();
 
         final List<long[]> offsetAndSizes = messageIndex.get(startSequence, endSequence);
@@ -351,7 +351,7 @@ public class CachedFileStore implements MessageStore {
      * (non-Javadoc)
      * @see quickfix.MessageStore#set(int, java.lang.String)
      */
-    public boolean set(int sequence, String message) throws IOException {
+    public boolean set(final int sequence, final String message) throws IOException {
         final long offset = messageFileWriter.getFilePointer();
         final int size = message.length();
         messageIndex.put(Long.valueOf(sequence), new long[] { offset, size });
@@ -405,7 +405,7 @@ public class CachedFileStore implements MessageStore {
     }
 
     /**
-     * @author mratsimbazafy 29 août 2008
+     * @author mratsimbazafy 29 aot 2008
      */
     private class CachedHashMap implements Map<Long, long[]> {
 
@@ -415,7 +415,7 @@ public class CachedFileStore implements MessageStore {
 
         private final int maxSize;
 
-        public CachedHashMap(int _maxSize) {
+        public CachedHashMap(final int _maxSize) {
             currentSize = 0;
             maxSize = _maxSize;
         }
@@ -425,11 +425,11 @@ public class CachedFileStore implements MessageStore {
             currentSize = 0;
         }
 
-        public boolean containsKey(Object key) {
+        public boolean containsKey(final Object key) {
             return cacheIndex.containsKey(key);
         }
 
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             return cacheIndex.containsValue(value);
         }
 
@@ -437,7 +437,7 @@ public class CachedFileStore implements MessageStore {
             return cacheIndex.entrySet();
         }
 
-        public long[] get(Object key) {
+        public long[] get(final Object key) {
             final long[] v = cacheIndex.get(key);
             if (v != null) {
                 return v;
@@ -453,7 +453,7 @@ public class CachedFileStore implements MessageStore {
             return cacheIndex.keySet();
         }
 
-        public long[] put(Long key, long[] value) {
+        public long[] put(final Long key, final long[] value) {
             cacheIndex.put(key, value);
             currentSize++;
             if (currentSize > maxSize) {
@@ -465,11 +465,11 @@ public class CachedFileStore implements MessageStore {
             return value;
         }
 
-        public void putAll(Map<? extends Long, ? extends long[]> t) {
+        public void putAll(final Map<? extends Long, ? extends long[]> t) {
             throw new UnsupportedOperationException("not supported");
         }
 
-        public long[] remove(Object key) {
+        public long[] remove(final Object key) {
             throw new UnsupportedOperationException("not supported");
         }
 

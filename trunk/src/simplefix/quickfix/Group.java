@@ -3,10 +3,15 @@ package simplefix.quickfix;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import quickfix.FieldNotFound;
 import simplefix.Tag;
 
 public class Group implements simplefix.Group {
+
+    private final static Logger log = LoggerFactory.getLogger(Group.class);
 
     final quickfix.Group _group;
 
@@ -19,7 +24,7 @@ public class Group implements simplefix.Group {
         try {
             return _group.getString(tag.getTagNum());
         } catch (FieldNotFound e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
         return null;
     }
@@ -45,5 +50,9 @@ public class Group implements simplefix.Group {
             }
         }
         _group.setGroups(tag.getTagNum(), quickGroups);
+    }
+
+    public quickfix.Group getQuickFixGroup() {
+        return _group;
     }
 }

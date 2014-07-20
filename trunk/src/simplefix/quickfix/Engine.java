@@ -35,7 +35,7 @@ import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.RejectLogon;
-import quickfix.ScreenLogFactory;
+import quickfix.SLF4JLogFactory;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 import quickfix.SocketAcceptor;
@@ -65,13 +65,13 @@ public class Engine implements simplefix.Engine {
             _settings = new SessionSettings(inputStream);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("Exception:", e);
                 }
             }
         }
@@ -81,13 +81,13 @@ public class Engine implements simplefix.Engine {
 
         _Application application = new _Application(app);
         MessageStoreFactory messageStoreFactory = new FileStoreFactory(_settings);
-        LogFactory logFactory = new ScreenLogFactory(true, true, true);
+        LogFactory logFactory = new SLF4JLogFactory(_settings);
         MessageFactory messageFactory = new DefaultMessageFactory();
 
         try {
             jmxExporter = new JmxExporter();
         } catch (JMException e1) {
-            e1.printStackTrace();
+            log.error("Exception:", e1);
         }
 
         try {
@@ -103,7 +103,7 @@ public class Engine implements simplefix.Engine {
             acceptor.start();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
 
         try {
@@ -118,7 +118,7 @@ public class Engine implements simplefix.Engine {
             initiator.start();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
     }
 
@@ -222,20 +222,31 @@ public class Engine implements simplefix.Engine {
         }
 
         public void onLogon(final SessionID sessionId) {
-            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
-            _app.onLogon(new Session(session));
+            try {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.onLogon(new Session(session));
 
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
 
         public void onLogout(final SessionID sessionId) {
-            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
-            _app.onLogout(new Session(session));
-
+            try {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.onLogout(new Session(session));
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
 
         public void toAdmin(final quickfix.Message message, final SessionID sessionId) {
-            // TODO Auto-generated method stub
-
+            try {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.toAppMessage(new Message(message), new Session(session));
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
 
         public void fromAdmin(final quickfix.Message message, final SessionID sessionId)
@@ -243,26 +254,35 @@ public class Engine implements simplefix.Engine {
 
             //treat session reject (35=3) as Application message
             if (message.getHeader().getString(35).equals("3")) {
-                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
-                _app.onAppMessage(new Message(message), new Session(session));
+                try {
+                    quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                    _app.onAppMessage(new Message(message), new Session(session));
+                } catch (Exception e) {
+                    log.error("Exception", e);
+                }
             }
-
         }
 
         public void toApp(final quickfix.Message message, final SessionID sessionId)
                 throws DoNotSend {
-            // TODO Auto-generated method stub
-
+            try {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.toAppMessage(new Message(message), new Session(session));
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
 
         public void fromApp(final quickfix.Message message, final SessionID sessionId)
                 throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
                 UnsupportedMessageType {
-            quickfix.Session session = quickfix.Session.lookupSession(sessionId);
-            _app.onAppMessage(new Message(message), new Session(session));
-
+            try {
+                quickfix.Session session = quickfix.Session.lookupSession(sessionId);
+                _app.onAppMessage(new Message(message), new Session(session));
+            } catch (Exception e) {
+                log.error("Exception", e);
+            }
         }
-
     }
 
     public simplefix.Session lookupSession(final String senderCompID, final String targetCompID) {

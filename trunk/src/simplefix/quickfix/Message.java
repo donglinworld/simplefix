@@ -3,12 +3,17 @@ package simplefix.quickfix;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import quickfix.FieldNotFound;
 import quickfix.InvalidMessage;
 import simplefix.MsgType;
 import simplefix.Tag;
 
 public class Message implements simplefix.Message {
+
+    private final static Logger log = LoggerFactory.getLogger(Message.class);
 
     quickfix.Message _msg;
     MsgType _type;
@@ -27,12 +32,11 @@ public class Message implements simplefix.Message {
             try {
                 _type = MsgType.fromString(_msg.getHeader().getString(35));
             } catch (FieldNotFound e) {
-                e.printStackTrace();
+                log.error("Exception:", e);
             }
 
         } catch (InvalidMessage e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
 
     }
@@ -43,7 +47,7 @@ public class Message implements simplefix.Message {
         try {
             _type = MsgType.fromString(msg.getHeader().getString(35));
         } catch (FieldNotFound e) {
-            e.printStackTrace();
+            log.error("Exception:", e);
         }
     }
 
@@ -59,7 +63,7 @@ public class Message implements simplefix.Message {
                 return str;
             }
         } catch (FieldNotFound e) {
-            //e.printStackTrace();
+            //ignore
         }
         try {
             str = _msg.getHeader().getString(tag.getTagNum());
@@ -67,7 +71,7 @@ public class Message implements simplefix.Message {
                 return str;
             }
         } catch (FieldNotFound e) {
-            //e.printStackTrace();
+            //ignore
         }
         try {
             str = _msg.getTrailer().getString(tag.getTagNum());
@@ -75,7 +79,7 @@ public class Message implements simplefix.Message {
                 return str;
             }
         } catch (FieldNotFound e) {
-            //e.printStackTrace();
+            //ignore
         }
         return null;
     }
@@ -108,6 +112,10 @@ public class Message implements simplefix.Message {
             }
         }
         _msg.setGroups(tag.getTagNum(), quickGroups);
+    }
+
+    public quickfix.Message getQuickFixMessage() {
+        return _msg;
     }
 
     @Override
