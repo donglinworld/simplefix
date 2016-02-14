@@ -14,21 +14,7 @@ Application java source code does not need to be aware of Acceptor or Initiator,
 
 
 Getting started:
-
-1). Download simplefix-example-1.X.X-sources.jar which includes simplfix example source code and simplefix needed binary jar files.
-
-2). Create a directory named "SimpleFIX-Example", and decompress above file into this directory.
-
-3). Import the project into Eclipse and try to run simplefix.examples.executor.Executor.java.
-
-4). Try to understand how simpler it is than the original Executor.java in QuickFIX/J.
-
-5). Develop your own FIX Application.
-
-6). If needed, download simple-quickfix-1.X.X-sources.jar or check out source files by SVN for further understanding.
-
-7). simplefix has been updated after 1.0.3, but it could not be put into downloads, please check out the latest version by SVN.
-
+Please refer: https://github.com/donglinworld/simplefix-example
 
 Notice:
 
