@@ -14,6 +14,7 @@ Application java source code does not need to be aware of Acceptor or Initiator,
 
 
 Getting started:
+
 Please refer: https://github.com/donglinworld/simplefix-example
 
 Notice:
