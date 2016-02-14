@@ -17,6 +17,10 @@ Getting started:
 
 Please refer: https://github.com/donglinworld/simplefix-example
 
+Source Recompile:
+
+mvn clean; mvn package
+
 Notice:
 
 simplefix does not include the mass of classes for every message type in every FIX version which are created by QuickFIX/J automatically.
