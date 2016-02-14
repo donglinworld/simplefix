@@ -20,6 +20,7 @@
 package quickfix;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +32,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.quickfixj.CharsetSupport;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -151,8 +153,22 @@ public class Message extends FieldMap {
     private int checkSum(final String s) {
         final int offset = s.lastIndexOf("\00110=");
         int sum = 0;
-        for (int i = 0; i < offset; i++) {
-            sum += s.charAt(i);
+
+        byte[] byteStr = null;
+        try {
+            byteStr = s.getBytes(CharsetSupport.getCharset());
+        } catch (UnsupportedEncodingException e) {
+            byteStr = null;
+        }
+
+        if (byteStr != null) {
+            for (int i = 0; i < byteStr.length; i++) {
+                sum += MessageUtils.getUnsignedByte(byteStr[i]);
+            }
+        } else {
+            for (int i = 0; i < offset; i++) {
+                sum += s.charAt(i);
+            }
         }
         return (sum + 1) % 256;
     }
@@ -357,7 +373,7 @@ public class Message extends FieldMap {
     public static class Header extends FieldMap {
         static final long serialVersionUID = -3193357271891865972L;
         private static final int[] EXCLUDED_HEADER_FIELDS = { BeginString.FIELD, BodyLength.FIELD,
-                MsgType.FIELD };
+            MsgType.FIELD };
 
         @Override
         protected void calculateString(final StringBuffer buffer, final int[] excludedFields,
@@ -370,7 +386,7 @@ public class Message extends FieldMap {
     public static class Trailer extends FieldMap {
         static final long serialVersionUID = -3193357271891865972L;
         private static final int[] TRAILER_FIELD_ORDER = { SignatureLength.FIELD, Signature.FIELD,
-                CheckSum.FIELD };
+            CheckSum.FIELD };
 
         public Trailer() {
             super(TRAILER_FIELD_ORDER);
@@ -451,7 +467,7 @@ public class Message extends FieldMap {
 
     public void fromString(final String messageData, final DataDictionary dd,
             final boolean doValidation)
-            throws InvalidMessage {
+                    throws InvalidMessage {
         parse(messageData, dd, dd, doValidation);
     }
 
@@ -465,7 +481,7 @@ public class Message extends FieldMap {
 
     void parse(final String messageData, final DataDictionary sessionDataDictionary,
             final DataDictionary applicationDataDictionary, final boolean doValidation)
-            throws InvalidMessage {
+                    throws InvalidMessage {
         this.messageData = messageData;
 
         try {
@@ -583,7 +599,7 @@ public class Message extends FieldMap {
 
     private void parseGroup(final String msgType, StringField field, final DataDictionary dd,
             final FieldMap parent)
-            throws InvalidMessage {
+                    throws InvalidMessage {
         final DataDictionary.GroupInfo rg = dd.getGroup(msgType, field.getField());
         final DataDictionary groupDataDictionary = rg.getDataDictionary();
         final int[] fieldOrder = groupDataDictionary.getOrderedFields();
@@ -619,7 +635,7 @@ public class Message extends FieldMap {
                         if (!firstFieldFound) {
                             throw new FieldException(
                                     SessionRejectReason.REPEATING_GROUP_FIELDS_OUT_OF_ORDER, field
-                                            .getTag());
+                                    .getTag());
                         }
 
                         if (fieldOrder != null && dd.isCheckUnorderedGroupFields()) {
@@ -750,7 +766,7 @@ public class Message extends FieldMap {
 
     private StringField extractField(final Group group, final DataDictionary dataDictionary,
             final FieldMap fields)
-            throws InvalidMessage {
+                    throws InvalidMessage {
         if (pushedBackField != null) {
             final StringField f = pushedBackField;
             pushedBackField = null;

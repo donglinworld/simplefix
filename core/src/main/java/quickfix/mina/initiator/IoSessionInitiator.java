@@ -59,16 +59,16 @@ public class IoSessionInitiator {
     private Future<?> reconnectFuture;
     protected final static Logger log = LoggerFactory.getLogger("display."+IoSessionInitiator.class.getName());
 
-    public IoSessionInitiator(Session fixSession, SocketAddress[] socketAddresses,  SocketAddress localAddress, 
-            int reconnectIntervalInSeconds[], ScheduledExecutorService executor,
-            NetworkingOptions networkingOptions, EventHandlingStrategy eventHandlingStrategy,
-            IoFilterChainBuilder userIoFilterChainBuilder, boolean sslEnabled, String keyStoreName,
-            String keyStorePassword, String[] enableProtocole, String[] cipherSuites) throws ConfigError {
+    public IoSessionInitiator(final Session fixSession, final SocketAddress[] socketAddresses,  final SocketAddress localAddress,
+            final int reconnectIntervalInSeconds[], final ScheduledExecutorService executor,
+            final NetworkingOptions networkingOptions, final EventHandlingStrategy eventHandlingStrategy,
+            final IoFilterChainBuilder userIoFilterChainBuilder, final boolean sslEnabled, final String keyStoreName,
+            final String keyStorePassword, final String[] enableProtocole, final String[] cipherSuites) throws ConfigError {
         this.executor = executor;
         final long reconnectIntervalInMillis[] = new long[reconnectIntervalInSeconds.length];
         for (int ii = 0; ii != reconnectIntervalInSeconds.length; ++ii) {
             reconnectIntervalInMillis[ii] = reconnectIntervalInSeconds[ii] * 1000L;
-        }        
+        }
         try {
             reconnectTask = new ConnectTask(sslEnabled, socketAddresses, localAddress, userIoFilterChainBuilder,
                     fixSession, reconnectIntervalInMillis, networkingOptions,
@@ -76,7 +76,7 @@ public class IoSessionInitiator {
         } catch (GeneralSecurityException e) {
             throw new ConfigError(e);
         }
-        log.info("[" + fixSession.getSessionID() + "] " + Arrays.asList(socketAddresses));        
+        log.info("[" + fixSession.getSessionID() + "] " + Arrays.asList(socketAddresses));
     }
 
     private static class ConnectTask implements Runnable {
@@ -85,10 +85,10 @@ public class IoSessionInitiator {
         private final IoConnector ioConnector;
         private final Session fixSession;
         private final long[] reconnectIntervalInMillis;
-        private String keyStoreName;
-        private String keyStorePassword;
-        private String[] enableProtocole;
-        private String[] cipherSuites;
+        private final String keyStoreName;
+        private final String keyStorePassword;
+        private final String[] enableProtocole;
+        private final String[] cipherSuites;
         private final InitiatorIoHandler ioHandler;
 
         private IoSession ioSession;
@@ -98,11 +98,11 @@ public class IoSessionInitiator {
         private int connectionFailureCount;
         private ConnectFuture connectFuture;
 
-        public ConnectTask(boolean sslEnabled, SocketAddress[] socketAddresses,
-                SocketAddress localAddress, IoFilterChainBuilder userIoFilterChainBuilder, Session fixSession,
-                long[] reconnectIntervalInMillis, NetworkingOptions networkingOptions,
-                EventHandlingStrategy eventHandlingStrategy, String keyStoreName,
-                String keyStorePassword, String[] enableProtocole, String[] cipherSuites) throws ConfigError, GeneralSecurityException {
+        public ConnectTask(final boolean sslEnabled, final SocketAddress[] socketAddresses,
+                final SocketAddress localAddress, final IoFilterChainBuilder userIoFilterChainBuilder, final Session fixSession,
+                final long[] reconnectIntervalInMillis, final NetworkingOptions networkingOptions,
+                final EventHandlingStrategy eventHandlingStrategy, final String keyStoreName,
+                final String keyStorePassword, final String[] enableProtocole, final String[] cipherSuites) throws ConfigError, GeneralSecurityException {
             this.socketAddresses = socketAddresses;
             this.localAddress = localAddress;
             this.fixSession = fixSession;
@@ -129,12 +129,16 @@ public class IoSessionInitiator {
                     eventHandlingStrategy);
         }
 
-        private void installSSLFilter(CompositeIoFilterChainBuilder ioFilterChainBuilder)
+        private void installSSLFilter(final CompositeIoFilterChainBuilder ioFilterChainBuilder)
                 throws GeneralSecurityException {
             SSLFilter sslFilter = new SSLFilter(SSLContextFactory.getInstance(keyStoreName,
                     keyStorePassword.toCharArray()));
-            if(enableProtocole != null)sslFilter.setEnabledProtocols(enableProtocole);
-            if(cipherSuites != null) sslFilter.setEnabledCipherSuites(cipherSuites);
+            if(enableProtocole != null) {
+                sslFilter.setEnabledProtocols(enableProtocole);
+            }
+            if(cipherSuites != null) {
+                sslFilter.setEnabledCipherSuites(cipherSuites);
+            }
             sslFilter.setUseClientMode(true);
             ioFilterChainBuilder.addLast(SSLSupport.FILTER_NAME, sslFilter);
         }
@@ -153,10 +157,10 @@ public class IoSessionInitiator {
             lastReconnectAttemptTime = SystemTime.currentTimeMillis();
             SocketAddress nextSocketAddress = getNextSocketAddress();
             try {
-            	if (localAddress == null) {
+                if (localAddress == null) {
                     connectFuture = ioConnector.connect(nextSocketAddress, ioHandler);
                 } else {
-                	//QFJ-482
+                    //QFJ-482
                     connectFuture = ioConnector.connect(nextSocketAddress, localAddress, ioHandler);
                 }
                 pollConnectFuture();
@@ -185,7 +189,7 @@ public class IoSessionInitiator {
         }
 
         private void handleConnectException(Throwable e) {
-        	++connectionFailureCount;        
+            ++connectionFailureCount;
             while (e.getCause() != null) {
                 e = e.getCause();
             }
@@ -193,7 +197,7 @@ public class IoSessionInitiator {
             if (e instanceof IOException) {
                 fixSession.getLog().onErrorEvent(e.getClass().getName() + ": " + e + nextRetryMsg);
             } else {
-            	LogUtil.logThrowable(fixSession.getLog(), "Exception during connection" + nextRetryMsg, e);
+                LogUtil.logThrowable(fixSession.getLog(), "Exception during connection" + nextRetryMsg, e);
             }
             connectFuture = null;
         }
@@ -218,10 +222,12 @@ public class IoSessionInitiator {
             return (ioSession == null || !ioSession.isConnected()) && isTimeForReconnect()
                     && (fixSession.isEnabled() && fixSession.isSessionTime());
         }
-        
+
         private long computeNextRetryConnectDelay() {
             int index = connectionFailureCount - 1;
-            if (index < 0) index = 0;
+            if (index < 0) {
+                index = 0;
+            }
             long millis;
             if (index >= reconnectIntervalInMillis.length) {
                 millis = reconnectIntervalInMillis[reconnectIntervalInMillis.length - 1];
@@ -230,7 +236,7 @@ public class IoSessionInitiator {
             }
             return millis;
         }
-        
+
 
         private boolean isTimeForReconnect() {
             return SystemTime.currentTimeMillis() - lastReconnectAttemptTime >= computeNextRetryConnectDelay();
@@ -252,7 +258,7 @@ public class IoSessionInitiator {
         public synchronized long getLastConnectTime() {
             return lastConnectTime;
         }
-        
+
         public Session getFixSession() {
             return fixSession;
         }
@@ -260,9 +266,14 @@ public class IoSessionInitiator {
 
     synchronized void start() {
         if (reconnectFuture == null) {
-        	// The following logon reenabled the session. The actual logon will take
-        	// place as a side-effect of the session timer task (not the reconnect task).
-            reconnectTask.getFixSession().logon(); // only enables the session
+            // The following logon reenabled the session. The actual logon will take
+            // place as a side-effect of the session timer task (not the reconnect task).
+            Session fixSession = reconnectTask.getFixSession();
+            if (fixSession.isInitialStart()) {
+                fixSession.logon();// only enables the session
+            } else {
+                fixSession.logout("Initial logout");
+            }
             reconnectFuture = executor
                     .scheduleWithFixedDelay(reconnectTask, 0, 1, TimeUnit.SECONDS);
         }

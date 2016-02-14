@@ -40,23 +40,23 @@ public class DefaultSessionFactory implements SessionFactory {
     private final LogFactory logFactory;
     private final MessageFactory messageFactory;
 
-    public DefaultSessionFactory(Application application, MessageStoreFactory messageStoreFactory,
-            LogFactory logFactory) {
+    public DefaultSessionFactory(final Application application, final MessageStoreFactory messageStoreFactory,
+            final LogFactory logFactory) {
         this.application = application;
         this.messageStoreFactory = messageStoreFactory;
         this.logFactory = logFactory;
         this.messageFactory = new DefaultMessageFactory();
     }
 
-    public DefaultSessionFactory(Application application, MessageStoreFactory messageStoreFactory,
-            LogFactory logFactory, MessageFactory messageFactory) {
+    public DefaultSessionFactory(final Application application, final MessageStoreFactory messageStoreFactory,
+            final LogFactory logFactory, final MessageFactory messageFactory) {
         this.application = application;
         this.messageStoreFactory = messageStoreFactory;
         this.logFactory = logFactory;
         this.messageFactory = messageFactory;
     }
 
-    public Session create(SessionID sessionID, SessionSettings settings) throws ConfigError {
+    public Session create(final SessionID sessionID, final SessionSettings settings) throws ConfigError {
         try {
             String connectionType = null;
 
@@ -176,6 +176,7 @@ public class DefaultSessionFactory implements SessionFactory {
             final int[] logonIntervals = getLogonIntervalsInSeconds(settings, sessionID);
             final Set<InetAddress> allowedRemoteAddresses = getInetAddresses(settings, sessionID);
 
+            final Properties sessionProperties = settings.getSessionProperties(sessionID);
             final Session session = new Session(application, messageStoreFactory, sessionID,
                     dataDictionaryProvider, new SessionSchedule(settings, sessionID), logFactory,
                     messageFactory, heartbeatInterval, checkLatency, maxLatency, millisInTimestamp,
@@ -184,7 +185,9 @@ public class DefaultSessionFactory implements SessionFactory {
                     testRequestDelayMultiplier, senderDefaultApplVerID, validateSequenceNumbers,
                     logonIntervals, resetOnError, disconnectOnError, disableHeartBeatCheck,
                     rejectInvalidMessage,
-                    forceResendWhenCorruptedStore, allowedRemoteAddresses, validateIncomingMessage, resendRequestChunkSize, enableNextExpectedMsgSeqNum, enableLastMsgSeqNumProcessed);
+                    forceResendWhenCorruptedStore, allowedRemoteAddresses, validateIncomingMessage,
+                    resendRequestChunkSize, enableNextExpectedMsgSeqNum,
+                    enableLastMsgSeqNumProcessed, sessionProperties);
 
             session.setLogonTimeout(logonTimeout);
             session.setLogoutTimeout(logoutTimeout);
@@ -203,8 +206,8 @@ public class DefaultSessionFactory implements SessionFactory {
         }
     }
 
-    private void processPreFixtDataDictionary(SessionID sessionID, SessionSettings settings,
-            DefaultDataDictionaryProvider dataDictionaryProvider) throws ConfigError,
+    private void processPreFixtDataDictionary(final SessionID sessionID, final SessionSettings settings,
+            final DefaultDataDictionaryProvider dataDictionaryProvider) throws ConfigError,
             FieldConvertError {
         final DataDictionary dataDictionary = createDataDictionary(sessionID, settings,
                 Session.SETTING_DATA_DICTIONARY, sessionID.getBeginString());
@@ -213,8 +216,8 @@ public class DefaultSessionFactory implements SessionFactory {
                 MessageUtils.toApplVerID(sessionID.getBeginString()), dataDictionary);
     }
 
-    private DataDictionary createDataDictionary(SessionID sessionID, SessionSettings settings,
-            String settingsKey, String beginString) throws ConfigError, FieldConvertError {
+    private DataDictionary createDataDictionary(final SessionID sessionID, final SessionSettings settings,
+            final String settingsKey, final String beginString) throws ConfigError, FieldConvertError {
         final String path = getDictionaryPath(sessionID, settings, settingsKey, beginString);
         final DataDictionary dataDictionary = getDataDictionary(path);
 
@@ -251,10 +254,10 @@ public class DefaultSessionFactory implements SessionFactory {
         return dataDictionary;
     }
 
-    private void processFixtDataDictionaries(SessionID sessionID, SessionSettings settings,
-            DefaultDataDictionaryProvider dataDictionaryProvider) throws ConfigError,
+    private void processFixtDataDictionaries(final SessionID sessionID, final SessionSettings settings,
+            final DefaultDataDictionaryProvider dataDictionaryProvider) throws ConfigError,
             FieldConvertError
-    {
+            {
         dataDictionaryProvider.addTransportDictionary(
                 sessionID.getBeginString(),
                 createDataDictionary(sessionID, settings, Session.SETTING_TRANSPORT_DATA_DICTIONARY,
@@ -288,9 +291,9 @@ public class DefaultSessionFactory implements SessionFactory {
                 }
             }
         }
-    }
+            }
 
-    private ApplVerID toApplVerID(String value) {
+    private ApplVerID toApplVerID(final String value) {
         if (isApplVerIdEnum(value)) {
             return new ApplVerID(value);
         } else {
@@ -299,12 +302,12 @@ public class DefaultSessionFactory implements SessionFactory {
         }
     }
 
-    private boolean isApplVerIdEnum(String value) {
+    private boolean isApplVerIdEnum(final String value) {
         return value.matches("[0-9]+");
     }
 
-    private String getDictionaryPath(SessionID sessionID, SessionSettings settings,
-            String settingsKey, String beginString) throws ConfigError, FieldConvertError {
+    private String getDictionaryPath(final SessionID sessionID, final SessionSettings settings,
+            final String settingsKey, final String beginString) throws ConfigError, FieldConvertError {
         String path;
         if (settings.isSetting(sessionID, settingsKey)) {
             path = settings.getString(sessionID, settingsKey);
@@ -314,11 +317,11 @@ public class DefaultSessionFactory implements SessionFactory {
         return path;
     }
 
-    private String toDictionaryPath(String beginString) {
+    private String toDictionaryPath(final String beginString) {
         return beginString.replaceAll("\\.", "") + ".xml";
     }
 
-    private DataDictionary getDataDictionary(String path) throws ConfigError {
+    private DataDictionary getDataDictionary(final String path) throws ConfigError {
         synchronized (dictionaryCache) {
             DataDictionary dataDictionary = dictionaryCache.get(path);
             if (dataDictionary == null) {
@@ -329,12 +332,14 @@ public class DefaultSessionFactory implements SessionFactory {
         }
     }
 
-    private int[] getLogonIntervalsInSeconds(SessionSettings settings, SessionID sessionID) throws ConfigError {
+    private int[] getLogonIntervalsInSeconds(final SessionSettings settings, final SessionID sessionID) throws ConfigError {
         if (settings.isSetting(sessionID, Initiator.SETTING_RECONNECT_INTERVAL)) {
             try {
                 final String raw = settings.getString(sessionID, Initiator.SETTING_RECONNECT_INTERVAL);
                 final int[] ret = SessionSettings.parseSettingReconnectInterval(raw);
-                if (ret != null) return ret;
+                if (ret != null) {
+                    return ret;
+                }
             } catch (final Throwable e) {
                 throw new ConfigError(e);
             }
@@ -343,7 +348,7 @@ public class DefaultSessionFactory implements SessionFactory {
     }
 
 
-    private Set<InetAddress> getInetAddresses(SessionSettings settings, SessionID sessionID)
+    private Set<InetAddress> getInetAddresses(final SessionSettings settings, final SessionID sessionID)
             throws ConfigError {
         if (settings.isSetting(sessionID, Session.SETTING_ALLOWED_REMOTE_ADDRESSES)) {
             try {
@@ -357,23 +362,23 @@ public class DefaultSessionFactory implements SessionFactory {
         return null; // default value
     }
 
-    private boolean getSetting(SessionSettings settings, SessionID sessionID, String key,
-            boolean defaultValue) throws ConfigError, FieldConvertError {
+    private boolean getSetting(final SessionSettings settings, final SessionID sessionID, final String key,
+            final boolean defaultValue) throws ConfigError, FieldConvertError {
         return settings.isSetting(sessionID, key) ? settings.getBool(sessionID, key) : defaultValue;
     }
 
-    private int getSetting(SessionSettings settings, SessionID sessionID, String key,
-            int defaultValue) throws ConfigError, FieldConvertError {
+    private int getSetting(final SessionSettings settings, final SessionID sessionID, final String key,
+            final int defaultValue) throws ConfigError, FieldConvertError {
         return settings.isSetting(sessionID, key)
                 ? (int) settings.getLong(sessionID, key)
-                : defaultValue;
+                        : defaultValue;
     }
 
-    private double getSetting(SessionSettings settings, SessionID sessionID, String key,
-            double defaultValue) throws ConfigError, FieldConvertError {
+    private double getSetting(final SessionSettings settings, final SessionID sessionID, final String key,
+            final double defaultValue) throws ConfigError, FieldConvertError {
         return settings.isSetting(sessionID, key)
                 ? Double.parseDouble(settings.getString(sessionID, key))
-                : defaultValue;
+                        : defaultValue;
     }
 
 }

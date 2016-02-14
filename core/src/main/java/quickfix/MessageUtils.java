@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (c) quickfixengine.org  All rights reserved. 
+ * Copyright (c) quickfixengine.org  All rights reserved.
  * 
- * This file is part of the QuickFIX FIX Engine 
+ * This file is part of the QuickFIX FIX Engine
  * 
- * This file may be distributed under the terms of the quickfixengine.org 
- * license as defined by quickfixengine.org and appearing in the file 
- * LICENSE included in the packaging of this file. 
+ * This file may be distributed under the terms of the quickfixengine.org
+ * license as defined by quickfixengine.org and appearing in the file
+ * LICENSE included in the packaging of this file.
  * 
- * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING 
- * THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A 
- * PARTICULAR PURPOSE. 
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
+ * THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE.
  * 
- * See http://www.quickfixengine.org/LICENSE for licensing information. 
+ * See http://www.quickfixengine.org/LICENSE for licensing information.
  * 
- * Contact ask@quickfixengine.org if any conditions of this licensing 
+ * Contact ask@quickfixengine.org if any conditions of this licensing
  * are not clear to you.
  ******************************************************************************/
 
@@ -40,43 +40,43 @@ public class MessageUtils {
 
     private static final char FIELD_SEPARATOR = '\001';
 
-    public static SessionID getSessionID(Message fixMessage) {
+    public static SessionID getSessionID(final Message fixMessage) {
         final Header header = fixMessage.getHeader();
         return new SessionID(getFieldOrDefault(header, BeginString.FIELD, null), getFieldOrDefault(
                 header, SenderCompID.FIELD, null), getFieldOrDefault(header, SenderSubID.FIELD,
-                null), getFieldOrDefault(header, SenderLocationID.FIELD, null), getFieldOrDefault(
-                header, TargetCompID.FIELD, null), getFieldOrDefault(header, TargetSubID.FIELD,
-                null), getFieldOrDefault(header, TargetLocationID.FIELD, null), null);
+                        null), getFieldOrDefault(header, SenderLocationID.FIELD, null), getFieldOrDefault(
+                                header, TargetCompID.FIELD, null), getFieldOrDefault(header, TargetSubID.FIELD,
+                                        null), getFieldOrDefault(header, TargetLocationID.FIELD, null), null);
     }
 
-    public static SessionID getSessionID(String messageString) {
+    public static SessionID getSessionID(final String messageString) {
         return new SessionID(getStringField(messageString, BeginString.FIELD), getStringField(
                 messageString, SenderCompID.FIELD),
                 getStringField(messageString, SenderSubID.FIELD), getStringField(messageString,
                         SenderLocationID.FIELD), getStringField(messageString, TargetCompID.FIELD),
-                getStringField(messageString, TargetSubID.FIELD), getStringField(messageString,
-                        TargetLocationID.FIELD), null);
+                        getStringField(messageString, TargetSubID.FIELD), getStringField(messageString,
+                                TargetLocationID.FIELD), null);
     }
 
-    public static SessionID getReverseSessionID(Message fixMessage) {
+    public static SessionID getReverseSessionID(final Message fixMessage) {
         final Header header = fixMessage.getHeader();
         return new SessionID(getFieldOrDefault(header, BeginString.FIELD, null), getFieldOrDefault(
                 header, TargetCompID.FIELD, null), getFieldOrDefault(header, TargetSubID.FIELD,
-                null), getFieldOrDefault(header, TargetLocationID.FIELD, null), getFieldOrDefault(
-                header, SenderCompID.FIELD, null), getFieldOrDefault(header, SenderSubID.FIELD,
-                null), getFieldOrDefault(header, SenderLocationID.FIELD, null), null);
+                        null), getFieldOrDefault(header, TargetLocationID.FIELD, null), getFieldOrDefault(
+                                header, SenderCompID.FIELD, null), getFieldOrDefault(header, SenderSubID.FIELD,
+                                        null), getFieldOrDefault(header, SenderLocationID.FIELD, null), null);
     }
 
-    public static SessionID getReverseSessionID(String messageString) {
+    public static SessionID getReverseSessionID(final String messageString) {
         return new SessionID(getStringField(messageString, BeginString.FIELD), getStringField(
                 messageString, TargetCompID.FIELD),
                 getStringField(messageString, TargetSubID.FIELD), getStringField(messageString,
                         TargetLocationID.FIELD), getStringField(messageString, SenderCompID.FIELD),
-                getStringField(messageString, SenderSubID.FIELD), getStringField(messageString,
-                        SenderLocationID.FIELD), null);
+                        getStringField(messageString, SenderSubID.FIELD), getStringField(messageString,
+                                SenderLocationID.FIELD), null);
     }
 
-    private static String getFieldOrDefault(FieldMap fields, int tag, String defaultValue) {
+    private static String getFieldOrDefault(final FieldMap fields, final int tag, final String defaultValue) {
         if (fields.isSetField(tag)) {
             try {
                 return fields.getString(tag);
@@ -99,8 +99,8 @@ public class MessageUtils {
      * @return the parsed message
      * @throws InvalidMessage
      */
-    public static Message parse(MessageFactory messageFactory, DataDictionary dataDictionary,
-            String messageString) throws InvalidMessage {
+    public static Message parse(final MessageFactory messageFactory, final DataDictionary dataDictionary,
+            final String messageString) throws InvalidMessage {
         final int index = messageString.indexOf(FIELD_SEPARATOR);
         if (index < 0) {
             throw new InvalidMessage("Message does not contain any field separator");
@@ -120,7 +120,7 @@ public class MessageUtils {
      * @return the parsed message
      * @throws InvalidMessage
      */
-    public static Message parse(Session session, String messageString) throws InvalidMessage {
+    public static Message parse(final Session session, final String messageString) throws InvalidMessage {
         final String beginString = getStringField(messageString, BeginString.FIELD);
         final String msgType = getMessageType(messageString);
 
@@ -143,7 +143,7 @@ public class MessageUtils {
         final quickfix.Message message = messageFactory.create(beginString, msgType);
         final DataDictionary payloadDictionary = MessageUtils.isAdminMessage(msgType)
                 ? sessionDataDictionary
-                : applicationDataDictionary;
+                        : applicationDataDictionary;
 
         message.parse(messageString, sessionDataDictionary, payloadDictionary,
                 payloadDictionary != null);
@@ -151,7 +151,7 @@ public class MessageUtils {
         return message;
     }
 
-    private static ApplVerID getApplVerID(Session session, String messageString)
+    private static ApplVerID getApplVerID(final Session session, final String messageString)
             throws InvalidMessage {
         ApplVerID applVerID = null;
 
@@ -179,19 +179,19 @@ public class MessageUtils {
         return applVerID;
     }
 
-    public static boolean isAdminMessage(String msgType) {
+    public static boolean isAdminMessage(final String msgType) {
         return msgType.length() == 1 && "0A12345".indexOf(msgType) != -1;
     }
 
-    public static boolean isHeartbeat(String message) {
+    public static boolean isHeartbeat(final String message) {
         return isMessageType(message, MsgType.HEARTBEAT);
     }
 
-    public static boolean isLogon(String message) {
+    public static boolean isLogon(final String message) {
         return isMessageType(message, MsgType.LOGON);
     }
 
-    private static boolean isMessageType(String message, String msgType) {
+    private static boolean isMessageType(final String message, final String msgType) {
         try {
             return msgType.equals(getMessageType(message));
         } catch (final InvalidMessage e) {
@@ -199,7 +199,7 @@ public class MessageUtils {
         }
     }
 
-    public static String getMessageType(String messageString) throws InvalidMessage {
+    public static String getMessageType(final String messageString) throws InvalidMessage {
         final String value = getStringField(messageString, 35);
         if (value == null) {
             throw new InvalidMessage("Missing or garbled message type in " + messageString);
@@ -207,7 +207,7 @@ public class MessageUtils {
         return value;
     }
 
-    public static String getStringField(String messageString, int tag) {
+    public static String getStringField(final String messageString, final int tag) {
         String value = null;
         final String tagString = Integer.toString(tag);
         int start = messageString.indexOf(tagString, 0);
@@ -252,7 +252,7 @@ public class MessageUtils {
      * @throws QFJException if conversion fails.
      * @see ApplVerID
      */
-    public static String toBeginString(ApplVerID applVerID) throws QFJException {
+    public static String toBeginString(final ApplVerID applVerID) throws QFJException {
         final String beginString = applVerIDtoBeginString.get(applVerID.getValue());
         if (beginString == null) {
             throw new QFJException("Unknown or unsupported ApplVerID: " + applVerID.getValue());
@@ -279,11 +279,16 @@ public class MessageUtils {
      * @throws QFJException if conversion fails.
      * @see FixVersions
      */
-    public static ApplVerID toApplVerID(String beginString) throws QFJException {
+    public static ApplVerID toApplVerID(final String beginString) throws QFJException {
         final ApplVerID applVerID = beginStringToApplVerID.get(beginString);
         if (applVerID == null) {
             throw new QFJException("Can't convert to ApplVerID: " + beginString);
         }
         return applVerID;
+    }
+
+    public static int getUnsignedByte(final byte b) {
+        int ret = (b) & 0xFF;
+        return ret;
     }
 }

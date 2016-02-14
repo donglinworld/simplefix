@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -384,6 +385,8 @@ public class Session implements Closeable {
     private final int[] logonIntervals;
     private final Set<InetAddress> allowedRemoteAddresses;
 
+    private final Properties sessionProperties;
+
     public static final int DEFAULT_MAX_LATENCY = 120;
     public static final int DEFAULT_RESEND_RANGE_CHUNK_SIZE = 0; //no resend range
     public static final double DEFAULT_TEST_REQUEST_DELAY_MULTIPLIER = 0.5;
@@ -393,12 +396,14 @@ public class Session implements Closeable {
     Session(final Application application, final MessageStoreFactory messageStoreFactory,
             final SessionID sessionID, final DataDictionaryProvider dataDictionaryProvider,
             final SessionSchedule sessionSchedule, final LogFactory logFactory,
-            final MessageFactory messageFactory, final int heartbeatInterval) {
+            final MessageFactory messageFactory, final int heartbeatInterval,
+            final Properties sessionProperties) {
         this(application, messageStoreFactory, sessionID, dataDictionaryProvider, sessionSchedule,
                 logFactory, messageFactory, heartbeatInterval, true, DEFAULT_MAX_LATENCY, true,
                 false, false, false, false, true, false, true, false,
                 DEFAULT_TEST_REQUEST_DELAY_MULTIPLIER, null, true, new int[] { 5 }, false, false,
-                false, true, false, null, true, DEFAULT_RESEND_RANGE_CHUNK_SIZE, false, false);
+                false, true, false, null, true, DEFAULT_RESEND_RANGE_CHUNK_SIZE, false, false,
+                sessionProperties);
     }
 
     Session(final Application application, final MessageStoreFactory messageStoreFactory,
@@ -417,7 +422,7 @@ public class Session implements Closeable {
             final boolean rejectInvalidMessage, final boolean forceResendWhenCorruptedStore,
             final Set<InetAddress> allowedRemoteAddresses, final boolean validateIncomingMessage,
             final int resendRequestChunkSize, final boolean enableNextExpectedMsgSeqNum,
-            final boolean enableLastMsgSeqNumProcessed) {
+            final boolean enableLastMsgSeqNumProcessed, final Properties sessionProperties) {
         this.application = application;
         this.sessionID = sessionID;
         this.sessionSchedule = sessionSchedule;
@@ -448,6 +453,7 @@ public class Session implements Closeable {
         this.resendRequestChunkSize = resendRequestChunkSize;
         this.enableNextExpectedMsgSeqNum = enableNextExpectedMsgSeqNum;
         this.enableLastMsgSeqNumProcessed = enableLastMsgSeqNumProcessed;
+        this.sessionProperties = sessionProperties;
 
         final Log engineLog = (logFactory != null) ? logFactory.create(sessionID) : null;
         if (engineLog instanceof SessionStateListener) {
@@ -936,46 +942,46 @@ public class Session implements Closeable {
                 final ApplVerID applVerID = header.isSetField(ApplVerID.FIELD) ? new ApplVerID(
                         header.getString(ApplVerID.FIELD)) : targetDefaultApplVerID.get();
 
-                final DataDictionary applicationDataDictionary = MessageUtils//
-                .isAdminMessage(msgType) ? dataDictionaryProvider//
-                .getSessionDataDictionary(beginString) : dataDictionaryProvider//
-                .getApplicationDataDictionary(applVerID);//
+                        final DataDictionary applicationDataDictionary = MessageUtils//
+                                .isAdminMessage(msgType) ? dataDictionaryProvider//
+                                        .getSessionDataDictionary(beginString) : dataDictionaryProvider//
+                                        .getApplicationDataDictionary(applVerID);//
 
-                // related to QFJ-367 : just warn invalid incoming field/tags
-                try {
-                    DataDictionary.validate(message, sessionDataDictionary,
-                            applicationDataDictionary);
-                } catch (final IncorrectTagValue e) {
-                    if (rejectInvalidMessage) {
-                        throw e;
-                    } else {
-                        getLog().onErrorEvent("Warn: incoming message with " + e + ": " + message);
-                    }
-                } catch (final FieldException e) {
-                    if (message.isSetField(e.getField())) {
-                        if (rejectInvalidMessage) {
-                            throw e;
-                        } else {
-                            getLog().onErrorEvent(
-                                    "Warn: incoming message with incorrect field: "
-                                            + message.getField(e.getField()) + ": " + message);
-                        }
-                    } else {
-                        if (rejectInvalidMessage) {
-                            throw e;
-                        } else {
-                            getLog().onErrorEvent(
-                                    "Warn: incoming message with missing field: " + e.getField()
-                                            + ": " + e.getMessage() + ": " + message);
+                                        // related to QFJ-367 : just warn invalid incoming field/tags
+                                        try {
+                                            DataDictionary.validate(message, sessionDataDictionary,
+                                                    applicationDataDictionary);
+                                        } catch (final IncorrectTagValue e) {
+                                            if (rejectInvalidMessage) {
+                                                throw e;
+                                            } else {
+                                                getLog().onErrorEvent("Warn: incoming message with " + e + ": " + message);
+                                            }
+                                        } catch (final FieldException e) {
+                                            if (message.isSetField(e.getField())) {
+                                                if (rejectInvalidMessage) {
+                                                    throw e;
+                                                } else {
+                                                    getLog().onErrorEvent(
+                                                            "Warn: incoming message with incorrect field: "
+                                                                    + message.getField(e.getField()) + ": " + message);
                                                 }
-                    }
-                } catch (final FieldNotFound e) {
-                    if (rejectInvalidMessage) {
-                        throw e;
-                    } else {
-                        getLog().onErrorEvent("Warn: incoming " + e + ": " + message);
-                    }
-                }
+                                            } else {
+                                                if (rejectInvalidMessage) {
+                                                    throw e;
+                                                } else {
+                                                    getLog().onErrorEvent(
+                                                            "Warn: incoming message with missing field: " + e.getField()
+                                                            + ": " + e.getMessage() + ": " + message);
+                                                }
+                                            }
+                                        } catch (final FieldNotFound e) {
+                                            if (rejectInvalidMessage) {
+                                                throw e;
+                                            } else {
+                                                getLog().onErrorEvent("Warn: incoming " + e + ": " + message);
+                                            }
+                                        }
 
             }
 
@@ -2551,6 +2557,15 @@ public class Session implements Closeable {
 
     public double getTestRequestDelayMultiplier() {
         return state.getTestRequestDelayMultiplier();
+    }
+
+    public boolean isInitialStart() {
+        String initialStart = sessionProperties.getProperty("InitialStart", "N");
+        return "Y".equals(initialStart);
+    }
+
+    public Properties getSessionProperties() {
+        return sessionProperties;
     }
 
     @Override
