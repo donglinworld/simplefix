@@ -1,7 +1,9 @@
 # simplefix
-Simple Java FIX Engine
 
-A simple Java FIX (Financial Information eXchange http://www.fixtradingcommunity.org/) Engine based on QuickFIX/J v1.5.2 (http://www.quickfixj.org/)
+--This is quite stable but based on QuickFIX/J v1.5.2 and no more update.
+--To enjoy the simpleness of simplefix and new features of QuickFIX/J, please refer https://github.com/donglinworld/simplequickfix
+
+A simple Java FIX (Financial Information eXchange https://www.fixtrading.org/) Engine based on QuickFIX/J v1.5.2 (http://www.quickfixj.org/)
 
 Main improvements:
 
