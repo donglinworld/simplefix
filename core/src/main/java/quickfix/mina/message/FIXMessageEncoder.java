@@ -70,15 +70,15 @@ public class FIXMessageEncoder implements MessageEncoder {
                         + message.getClass(), e);
             }
         }
-
+        byte[] bytes;
         try {
-            byte[] bytes = fixMessageString.getBytes(charsetEncoding);
-            ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
-            buffer.put(bytes);
-            buffer.flip();
-            out.write(buffer);
+            bytes = fixMessageString.getBytes(charsetEncoding);
         } catch (UnsupportedEncodingException e) {
-            throw new ProtocolCodecException(e);
+            bytes = fixMessageString.getBytes();
         }
+        ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
+        buffer.put(bytes);
+        buffer.flip();
+        out.write(buffer);
     }
 }

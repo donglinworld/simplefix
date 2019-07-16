@@ -152,23 +152,17 @@ public class Message extends FieldMap {
 
     private int checkSum(final String s) {
         final int offset = s.lastIndexOf("\00110=");
+        String str = s.substring(0, offset);
         int sum = 0;
 
         byte[] byteStr = null;
         try {
-            byteStr = s.getBytes(CharsetSupport.getCharset());
+            byteStr = str.getBytes(CharsetSupport.getCharset());
         } catch (UnsupportedEncodingException e) {
-            byteStr = null;
+            byteStr = str.getBytes();
         }
-
-        if (byteStr != null) {
-            for (int i = 0; i < byteStr.length; i++) {
-                sum += MessageUtils.getUnsignedByte(byteStr[i]);
-            }
-        } else {
-            for (int i = 0; i < offset; i++) {
-                sum += s.charAt(i);
-            }
+        for (int i = 0; i < byteStr.length; i++) {
+            sum += MessageUtils.getUnsignedByte(byteStr[i]);
         }
         return (sum + 1) % 256;
     }

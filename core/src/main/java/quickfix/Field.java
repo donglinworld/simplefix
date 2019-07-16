@@ -118,7 +118,7 @@ public /*abstract*/ class Field<T> implements Serializable{
         try {
             return data.getBytes(CharsetSupport.getCharset()).length + 1;
         } catch (UnsupportedEncodingException e) {
-            return data.length() + 1;
+            return data.getBytes().length + 1;
         }
     }
 
@@ -130,16 +130,10 @@ public /*abstract*/ class Field<T> implements Serializable{
         try {
             byteData = data.getBytes(CharsetSupport.getCharset());
         } catch (UnsupportedEncodingException e) {
-            byteData = null;
+            byteData = data.getBytes();
         }
-        if (byteData != null) {
-            for (int i = 0; i < byteData.length; i++) {
-                sum += MessageUtils.getUnsignedByte(byteData[i]);
-            }
-        } else {
-            for (int i = 0; i < data.length(); i++) {
-                sum += data.charAt(i);
-            }
+        for (int i = 0; i < byteData.length; i++) {
+            sum += MessageUtils.getUnsignedByte(byteData[i]);
         }
         return sum+1;
     }
