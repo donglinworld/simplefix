@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="core/src/main/java"/>
-	<classpathentry kind="src" path="core/target/generated-sources/messages"/>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry excluding="**" kind="src" output="classes" path="core/src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="src" path="examples/src"/>
+	<classpathentry kind="src" path="examples/resources"/>
 	<classpathentry kind="lib" path="core/src/main/lib/mina-core-1.1.7.jar"/>
 	<classpathentry kind="lib" path="core/src/main/lib/optional/mina-filter-ssl-1.1.7.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
@@ -19,18 +13,8 @@
 	<classpathentry kind="lib" path="core/src/main/lib/optional/proxool-cglib.jar"/>
 	<classpathentry exported="true" kind="lib" path="core/src/main/lib/optional/sleepycat-je_2.1.30.jar"/>
 	<classpathentry kind="lib" path="core/src/main/lib/slf4j-api-1.6.3.jar"/>
-	<classpathentry kind="lib" path="core/src/main/lib/slf4j-jdk14-1.6.3.jar"/>
-	<classpathentry kind="src" output="target/test-classes" path="core/test">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-			<attribute name="test" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="examples/lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="examples/lib/simple-quickfix-1.0.4.jar"/>
+	<classpathentry kind="lib" path="examples/lib/slf4j-log4j12-1.6.3.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
