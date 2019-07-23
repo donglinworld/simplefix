@@ -1,4 +1,4 @@
-# simplefix
+# SimpleFIX
 
 --This is quite stable but based on QuickFIX/J v1.5.2 and no more update.
 
@@ -6,7 +6,7 @@
 
 A simple Java FIX (Financial Information eXchange https://www.fixtrading.org/) Engine based on QuickFIX/J v1.5.2 (http://www.quickfixj.org/)
 
-Main improvements:
+## Main improvements:
 
 1). Providing one simple abstract FIX layer (interfaces)
 Application java source code does not need to directly depend on QuickFIX/J FIX engine classes.
@@ -16,7 +16,7 @@ Application based on simplefix interfaces is very easy to shift to other FIX eng
 Application java source code does not need to be aware of Acceptor or Initiator, configuration in init file only is enough.
 
 
-Getting started:
+## Getting started:
 
 1). Download simplefix-master.zip from this page.
 
@@ -29,12 +29,12 @@ Getting started:
 5). Develop your own FIX Application.
 
 
-Recompile simplefix lib from Source:
+## Recompile simplefix lib from Source:
 
 mvn clean; mvn package
 
 
-Notice:
+## Notice:
 
 simplefix does not include the mass of classes for every message type in every FIX version which are created by QuickFIX/J automatically.
 This makes the FIX engine is much lighter and simpler.
