@@ -25,9 +25,9 @@
 			<version>2.1.30</version>
 		</dependency>
 		<dependency>
-			<groupId>proxool</groupId>
-			<artifactId>proxool</artifactId>
-			<version>0.9.1</version>
+		    <groupId>com.cloudhopper.proxool</groupId>
+		    <artifactId>proxool</artifactId>
+		    <version>0.9.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -42,20 +42,22 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
 				<configuration>
 					<includes>
 						<include>core/target/generated-sources/messages/**/*.java</include>
 						<include>core/src/main/java/**/*.java</include>
 						<include>src/**/*.java</include>
 					</includes>
-                    <source>1.6</source>
-					<target>1.6</target>
+                    <source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
 				<configuration>
 					<attach>false</attach>
 				</configuration>
@@ -81,6 +83,13 @@
 		<repository>
 			<id>fusesourceRepo</id>
 			<url>http://repo.fusesource.com/nexus/content/groups/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>maven2</id>
+			<url>https://repo1.maven.org/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
